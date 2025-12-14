@@ -1,6 +1,7 @@
 import { CheckCircle } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 type OrderItem = {
   id: string;
@@ -20,20 +21,21 @@ type Order = {
 export default function OrderSuccessPage() {
   const router = useRouter();
   const { orderId } = router.query;
+  const { data: session } = useSession();
 
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!orderId || typeof orderId !== "string") return;
+    if (!orderId || !session?.user?.id) return;
 
     const fetchOrder = async () => {
       try {
-        const res = await fetch(`/api/orders/${orderId}`);
+        const res = await fetch(`/api/orders/${orderId}?user_id=${session.user.id}`);
         if (!res.ok) throw new Error("Failed to fetch order");
 
         const data = await res.json();
-        setOrder(data);
+        setOrder(data.order);
       } catch (err) {
         console.error(err);
       } finally {
@@ -42,7 +44,7 @@ export default function OrderSuccessPage() {
     };
 
     fetchOrder();
-  }, [orderId]);
+  }, [orderId, session]);
 
   if (loading) {
     return <p className="p-8">Loading order...</p>;
@@ -70,7 +72,7 @@ export default function OrderSuccessPage() {
         <p><strong>Status:</strong> {order.status}</p>
         <p><strong>Date:</strong> {new Date(order.created_at).toLocaleString()}</p>
         <p className="mt-4 text-xl font-bold">
-          Total Paid: ${order.total.toFixed(2)}
+          Total Paid: ${order.total.toFixed(2) ?? "0.00"}
         </p>
       </div>
 

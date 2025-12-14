@@ -34,20 +34,9 @@ export default async function handler(
   }
 
   try {
-    const token = req.headers.authorization?.replace("Bearer ", "");
+    const { user_id, items, shipping, payment } = req.body;
 
-    if (!token) {
-    return res.status(401).json({ message: "Missing auth token" });
-    }
-
-    const {
-    data: { user },
-    error: authError,
-    } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-    return res.status(401).json({ message: "Unauthorized" });
-    }
+    if (!user_id) return res.status(401).json({ message: "User ID required" });
 
     const body = req.body as CreateOrderBody;
 
@@ -67,7 +56,7 @@ export default async function handler(
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert({
-        user_id: user.id,
+        user_id: user_id,
         status: "PAID",
         subtotal,
         shipping_cost: shippingCost,

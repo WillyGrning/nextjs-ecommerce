@@ -14,6 +14,7 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 
 /**
  * Client-side CheckoutPage
@@ -85,6 +86,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [notification, setNotification] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const { data: session } = useSession();
 
   // shipping & payment state (simple, client-side)
   const [shippingInfo, setShippingInfo] = useState({
@@ -295,6 +297,7 @@ export default function CheckoutPage() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
+              user_id: session?.user.id,
                 items: checkoutItems.map(it => ({
                 product_id: it.products?.id,
                 quantity: it.quantity,
@@ -306,7 +309,7 @@ export default function CheckoutPage() {
                 last4: paymentInfo.cardNumber.slice(-4),
                 },
             }),
-            });
+        });
 
             if (!res.ok) {
             throw new Error("Order creation failed");
