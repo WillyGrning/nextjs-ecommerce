@@ -12,6 +12,7 @@ import { supabase } from "../../lib/supabase";
 import { Database } from "@/types/supabase";
 import Link from "next/link";
 import { useCart, useFavorite } from "./products";
+import Papa from "papaparse";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
@@ -97,6 +98,49 @@ export default function Home({ products: initialProducts }: Props) {
       badge,
     };
   });
+
+  useEffect(() => {
+    // Ambil IP publik user
+    const fetchIP = async () => {
+      try {
+        const ipRes = await fetch("https://api.ipify.org?format=json");
+        const ipData = await ipRes.json();
+        const userIP = ipData.ip;
+
+        // Ambil user agent + timestamp
+        const visitData = {
+          ip: userIP,
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          timestamp: new Date().toISOString(),
+        };
+
+        console.log("User visit:", visitData);
+
+        // Simpan ke backend / Supabase (opsional)
+        await fetch("/api/log-user-visit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(visitData),
+        });
+
+        // // Export ke CSV otomatis (optional)
+        // const csv = Papa.unparse([visitData]);
+        // const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        // const url = URL.createObjectURL(blob);
+        // const a = document.createElement("a");
+        // a.href = url;
+        // a.download = `user-visit-${Date.now()}.csv`;
+        // document.body.appendChild(a);
+        // a.click();
+        // document.body.removeChild(a);
+      } catch (err) {
+        console.error("Failed to track user IP:", err);
+      }
+    };
+
+    fetchIP();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">

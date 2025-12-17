@@ -31,7 +31,7 @@ export default async function handler(
       .from("users")
       .select("id")
       .eq("email", email)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error(error);

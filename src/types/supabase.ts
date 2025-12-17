@@ -517,6 +517,30 @@ export type Database = {
           },
         ]
       }
+      user_visits: {
+        Row: {
+          id: number
+          ip: string
+          timestamp: string
+          url: string
+          user_agent: string
+        }
+        Insert: {
+          id?: number
+          ip: string
+          timestamp?: string
+          url: string
+          user_agent: string
+        }
+        Update: {
+          id?: number
+          ip?: string
+          timestamp?: string
+          url?: string
+          user_agent?: string
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           address: string | null

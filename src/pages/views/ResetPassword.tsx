@@ -101,7 +101,7 @@ export default function ResetPassword({
                         </div>
 
                         <Link
-                            href="/auth/forgot-password"
+                            href="/auth/forgotPassword"
                             className="inline-block w-full bg-gradient-to-r from-red-500 to-pink-500 text-white py-3.5 rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                         >
                             Request New Link
