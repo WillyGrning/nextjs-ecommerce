@@ -19,6 +19,14 @@ type Props = {
   products: Product[];
 };
 
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
+};
+
 export default function Home({ products: initialProducts }: Props) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const { adding, handleAddToCart } = useCart();
@@ -115,9 +123,12 @@ export default function Home({ products: initialProducts }: Props) {
                 elevate your everyday experience.
               </p>
               <div className="flex gap-4">
-                <button className="bg-blue-600 text-white px-8 py-4 rounded-full font-medium hover:bg-blue-700 transition shadow-lg hover:shadow-xl">
+                <a
+                  href="#featured"
+                  className="bg-blue-600 text-white px-8 py-4 rounded-full font-medium hover:bg-blue-700 transition shadow-lg hover:shadow-xl"
+                >
                   Shop Now
-                </button>
+                </a>
                 <button className="bg-white text-gray-700 px-8 py-4 rounded-full font-medium hover:bg-gray-50 transition border border-gray-200">
                   View Deals
                 </button>
@@ -150,7 +161,10 @@ export default function Home({ products: initialProducts }: Props) {
       </div>
 
       {/* Featured Products */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div
+        id="featured"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
+      >
         <div className="flex justify-between items-center mb-12">
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
@@ -158,104 +172,114 @@ export default function Home({ products: initialProducts }: Props) {
             </h2>
             <p className="text-gray-600">Handpicked items just for you</p>
           </div>
-          <button className="text-blue-600 font-medium hover:text-blue-700 transition">
-            View All →
-          </button>
+          <Link href="/products">
+            <button className="text-blue-600 cursor-pointer font-medium hover:text-blue-700 transition">
+              View All →
+            </button>
+          </Link>
         </div>
 
         {/* Product Grid */}
         <div className="grid md:grid-cols-3 gap-8">
-            {productsWithBadge.map((product) => (
-              <Link
+          {productsWithBadge.map((product) => (
+            <Link
+              key={product.id}
+              href={`/products/${product.id}/${product.name}`}
+              className="block group relative"
+            >
+              <div
                 key={product.id}
-                href={`/products/${product.id}/${product.name}`}
-                className="block group relative"
+                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group cursor-pointer"
               >
-                  <div
-                    key={product.id}
-                    className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group cursor-pointer"
-                  >
-                    <div className="relative overflow-hidden">
-                      <Image
-                        src={product.image ?? "/image/placeholder.png"}
-                        alt={product.name}
-                        className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
-                        width={600}
-                        height={600}
-                      />
-                      <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                        -{product.discount}%
-                      </div>
-                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-gray-700">
-                        {product.badge && product.badge}
-                      </div>
-                      <button className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-gray-900 px-6 py-3 rounded-full font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
-                        Quick View
-                      </button>
-                      <button
-                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                            e.preventDefault(); // cegah Link navigate
-                            e.stopPropagation(); // cegah bubbling ke Link
-                            handleAddToFavorites(product.id);
-                        }}
-                        disabled={addingFav === product.id}
-                        className="absolute bottom-4 right-4 bg-white p-3 rounded-full z-99 shadow-lg hover:bg-red-50 transition opacity-0 group-hover:opacity-100 cursor-pointer"
-                      >
-                        <Heart className="w-5 h-5 text-gray-700 hover:text-red-500 transition" />
-                      </button>
+                <div className="relative overflow-hidden">
+                  <Image
+                    src={product.image ?? "/image/placeholder.png"}
+                    alt={product.name}
+                    className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
+                    width={600}
+                    height={600}
+                  />
+                  {product.discount && product.discount > 0 && (
+                    <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                      -{product.discount}%
                     </div>
+                  )}
 
-                    <div className="p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition">
-                        {product.name}
-                      </h3>
+                  {product.badge && (
+                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-gray-700">
+                      {product.badge && product.badge}
+                    </div>
+                  )}
+                  <button className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-gray-900 px-6 py-3 rounded-full font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
+                    Quick View
+                  </button>
+                  <button
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.preventDefault(); // cegah Link navigate
+                      e.stopPropagation(); // cegah bubbling ke Link
+                      handleAddToFavorites(product.id);
+                    }}
+                    disabled={addingFav === product.id}
+                    className="absolute bottom-4 right-4 bg-white p-3 rounded-full z-99 shadow-lg hover:bg-red-50 transition opacity-0 group-hover:opacity-100 cursor-pointer"
+                  >
+                    <Heart className="w-5 h-5 text-gray-700 hover:text-red-500 transition" />
+                  </button>
+                </div>
 
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < Math.floor(product.rating ?? 0)
-                                  ? "text-yellow-400 fill-yellow-400"
-                                  : "text-gray-300"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-sm text-gray-600">
-                          {product.rating} ({product.sales})
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition">
+                    {product.name}
+                  </h3>
+
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < Math.floor(product.rating ?? 0)
+                              ? "text-yellow-400 fill-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-600">
+                      {product.rating} ({product.sales || 0} sold)
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl font-bold text-gray-900 pointer-events-auto select-text">
+                          {formatCurrency(
+                            product.price -
+                              (product.price * (product.discount ?? 0)) / 100
+                          )}
+                        </span>
+                        <span className="text-sm text-gray-400 line-through pointer-events-auto select-text">
+                          {(product?.discount ?? 0) > 0
+                            ? formatCurrency(product.price)
+                            : null}
                         </span>
                       </div>
-
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-2xl font-bold text-gray-900 pointer-events-auto select-text">
-                              $
-                              {product.price -
-                                (product.price * (product.discount ?? 0)) / 100}
-                            </span>
-                            <span className="text-sm text-gray-400 line-through pointer-events-auto select-text">
-                              ${product.price}
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                              e.preventDefault(); // cegah Link navigate
-                              e.stopPropagation(); // cegah bubbling ke Link
-                              handleAddToCart(product.id);
-                          }}
-                          className="bg-blue-600 text-white p-3 rounded-full cursor-pointer hover:bg-blue-700 transition shadow-md hover:shadow-lg"
-                        >
-                          <ShoppingCart className="w-5 h-5" />
-                        </button>
-                      </div>
                     </div>
+                    <button
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                        e.preventDefault(); // cegah Link navigate
+                        e.stopPropagation(); // cegah bubbling ke Link
+                        handleAddToCart(product.id);
+                      }}
+                      className="bg-blue-600 text-white p-3 rounded-full cursor-pointer hover:bg-blue-700 transition shadow-md hover:shadow-lg"
+                    >
+                      <ShoppingCart className="w-5 h-5" />
+                    </button>
                   </div>
-              </Link>
-            ))}
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
 

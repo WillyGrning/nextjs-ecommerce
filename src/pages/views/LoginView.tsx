@@ -137,7 +137,7 @@ export default function LoginView({ handleSubmit, loading }: LoginViewProps) {
                                     <button 
                                         onClick={onSubmit}
                                         disabled={loading}
-                                        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3.5 md:py-4 text-base md:text-lg rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+                                        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3.5 md:py-4 cursor-pointer text-base md:text-lg rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
                                     >
                                         <span className="relative z-10">{loading ? "Signing in..." : "Sign In"}</span>
                                         <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

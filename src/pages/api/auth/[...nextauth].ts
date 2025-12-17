@@ -66,6 +66,7 @@ export const authOptions: NextAuthOptions = {
             id: String(user.id),
             email: user.email,
             name: user.fullname ?? "",
+            role: user.role || "member",
           };
         } catch (error) {
           console.error("💥 Auth error:", error);
@@ -104,21 +105,21 @@ export const authOptions: NextAuthOptions = {
           .single();
 
         if (!existingUser) {
-            const { data: newUser } = await supabase
-              .from("users")
-              .insert({
-                email: email,
-                fullname: user.name ?? "",
-                role: "member",
-                type: "google",
-                password: null,
-              })
-              .select()
-              .single();
+          const { data: newUser } = await supabase
+            .from("users")
+            .insert({
+              email: email,
+              fullname: user.name ?? "",
+              role: "member",
+              type: "google",
+              password: null,
+            })
+            .select()
+            .single();
 
-            user.id = newUser.id;
+          user.id = newUser.id;
         } else {
-            user.id = existingUser.id;
+          user.id = existingUser.id;
         }
       }
 
@@ -128,12 +129,18 @@ export const authOptions: NextAuthOptions = {
     /**
      * 🔹 JWT CALLBACK (TIDAK DIRUSAK)
      */
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
+        token.role = user.role;
       }
+
+      if (trigger === "update" && session?.name) {
+        token.name = session.name;
+      }
+
       return token;
     },
 
@@ -141,11 +148,26 @@ export const authOptions: NextAuthOptions = {
      * 🔹 SESSION CALLBACK (TIDAK DIRUSAK)
      */
     async session({ session, token }) {
+      if (!token?.id) return session;
+
+      const { data: user, error } = await supabase
+        .from("users")
+        .select("id, email, fullname, role")
+        .eq("id", token.id)
+        .single();
+
+      if (error || !user) {
+        console.error("❌ Failed to sync session user:", error);
+        return session;
+      }
+
       session.user = {
-        id: token.id as string,
-        email: token.email as string,
-        name: token.name as string,
+        id: user.id,
+        email: user.email,
+        name: user.fullname,
+        role: user.role,
       };
+
       return session;
     },
   },

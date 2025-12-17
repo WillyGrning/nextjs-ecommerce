@@ -42,7 +42,7 @@ export default function UserSetting() {
   // Sample user data (bisa diganti dengan data dari props/context)
   const [formData, setFormData] = useState({
     profile: {
-      fullName: "",
+      fullname: "",
       email: "",
       phone: "",
       avatar: "",
@@ -143,7 +143,7 @@ export default function UserSetting() {
         setFormData((prev) => ({
           ...prev,
           profile: {
-            fullName: data.fullName || "",
+            fullname: data.fullname || "",
             email: data.email || "",
             phone: data.phone || "",
             address: data.address || "",
@@ -242,7 +242,7 @@ export default function UserSetting() {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                      className={`w-full flex items-center cursor-pointer gap-3 px-4 py-3 rounded-xl transition-all ${
                         activeTab === tab.id
                           ? 'bg-blue-600 text-white shadow-lg scale-105'
                           : 'text-gray-700 hover:bg-gray-100'
@@ -287,13 +287,13 @@ export default function UserSetting() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => fileInputRef.current?.click()}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                          className="px-4 py-2 bg-blue-600 text-white cursor-pointer rounded-lg hover:bg-blue-700 transition text-sm font-medium"
                         >
                           Upload New
                         </button>
                         <button
                           onClick={handleRemoveAvatar} 
-                          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm font-medium"
+                          className="px-4 py-2 bg-gray-100 text-gray-700 cursor-pointer rounded-lg hover:bg-gray-200 transition text-sm font-medium"
                         >
                           Remove
                         </button>
@@ -319,10 +319,10 @@ export default function UserSetting() {
                           <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                           <input
                             type="text"
-                            value={formData.profile.fullName}
+                            value={formData.profile.fullname}
                             onChange={(e) => setFormData(prev => ({
                               ...prev,
-                              profile: { ...prev.profile, fullName: e.target.value }
+                              profile: { ...prev.profile, fullname: e.target.value }
                             }))}
                             className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition"
                           />
@@ -674,13 +674,13 @@ export default function UserSetting() {
                     Last saved: 2 minutes ago
                   </p>
                   <div className="flex gap-3">
-                    <button className="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium">
+                    <button className="px-6 py-2.5 border-2 border-gray-300 cursor-pointer text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium">
                       Cancel
                     </button>
                     <button
                       onClick={handleSave}
                       disabled={isSaving}
-                      className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-6 py-2.5 bg-blue-600 text-white cursor-pointer rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSaving ? (
                         <>

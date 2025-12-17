@@ -14,67 +14,93 @@ const supabase = createClient(
 
 type UserRow = Database["public"]["Tables"]["users"]["Row"];
 
-type ApiResponse =
-  | { message: string; user?: UserRow }
-  | { error: string };
+type ApiResponse = { message: string; user?: UserRow } | { error: string };
+
+interface UserUpdatePayload {
+  fullname?: string;
+  email?: string;
+  phone_number?: string | null;
+  address?: string | null;
+  bio?: string | null;
+  image?: string;
+}
+
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse>
 ) {
   const session = await getServerSession(req, res, authOptions);
-  if (!session?.user?.id) return res.status(401).json({ error: "Unauthorized" });
+  if (!session?.user?.id)
+    return res.status(401).json({ error: "Unauthorized" });
 
   const userId = session.user.id;
 
   try {
     if (req.method === "PUT") {
-      // Handle profile update (incl avatar)
-      const { fullName, phone, address, bio, avatar } = req.body ?? {};
+      const { fullname, email, phone, address, bio, avatar } = req.body ?? {};
 
-      if (typeof fullName !== "string" || fullName.trim().length < 2) {
-        return res.status(400).json({ error: "Invalid fullName (min 2 chars)" });
+      const updatePayload: Partial<UserUpdatePayload> = {};
+
+      if (typeof fullname === "string" && fullname.trim().length >= 2) {
+        updatePayload.fullname = fullname.trim();
       }
 
-      const normalizedPhone = typeof phone === "string" && phone.trim() !== "" ? phone.trim() : null;
-      const normalizedAddress = typeof address === "string" && address.trim() !== "" ? address.trim() : null;
-      const normalizedBio = typeof bio === "string" && bio.trim() !== "" ? bio.trim() : null;
+      if (typeof email === "string" && email.includes("@")) {
+        updatePayload.email = email.trim().toLowerCase();
+      }
 
-      let avatarUrl: string | undefined;
+      if (typeof phone === "string" && phone.trim() !== "") {
+        updatePayload.phone_number = phone.trim();
+      }
 
-      // Kalau avatar baru dikirim dalam base64, simpan ke public/uploads
+      if (typeof address === "string" && address.trim() !== "") {
+        updatePayload.address = address.trim();
+      }
+
+      if (typeof bio === "string" && bio.trim() !== "") {
+        updatePayload.bio = bio.trim();
+      }
+
+      /* Avatar handling */
       if (typeof avatar === "string" && avatar.startsWith("data:image")) {
         const matches = avatar.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
         if (matches) {
           const ext = matches[1];
-          const data = matches[2];
-          const buffer = Buffer.from(data, "base64");
-          const fileName = `avatar-${Date.now()}.${ext}`;
-          const uploadPath = path.join(process.cwd(), "/public/uploads", fileName);
+          const buffer = Buffer.from(matches[2], "base64");
+          const fileName = `avatar-${userId}-${Date.now()}.${ext}`;
+          const uploadPath = path.join(
+            process.cwd(),
+            "public/uploads",
+            fileName
+          );
 
           fs.writeFileSync(uploadPath, buffer);
-          avatarUrl = `/uploads/${fileName}`;
+          updatePayload.image = `/uploads/${fileName}`;
         }
+      }
+
+      if (Object.keys(updatePayload).length === 0) {
+        return res.status(400).json({ error: "No valid fields to update" });
       }
 
       const { data, error } = await supabase
         .from("users")
-        .update({
-          fullname: fullName.trim(),
-          phone_number: normalizedPhone,
-          address: normalizedAddress,
-          bio: normalizedBio,
-          ...(avatarUrl ? { image: avatarUrl } : {}),
-        })
+        .update(updatePayload)
         .eq("id", userId)
         .select()
         .single();
 
-      if (error) return res.status(500).json({ error: "Database update failed" });
+      if (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Database update failed" });
+      }
 
-      return res.status(200).json({ message: "Profile updated", user: data });
-    } 
-    else if (req.method === "DELETE") {
+      return res.status(200).json({
+        message: "Profile updated successfully",
+        user: data,
+      });
+    } else if (req.method === "DELETE") {
       // Handle avatar removal
       const { data: user, error: fetchErr } = await supabase
         .from("users")
@@ -82,7 +108,8 @@ export default async function handler(
         .eq("id", userId)
         .single();
 
-      if (fetchErr) return res.status(500).json({ error: "Failed to get user avatar" });
+      if (fetchErr)
+        return res.status(500).json({ error: "Failed to get user avatar" });
 
       if (user?.image) {
         const filePath = path.join(process.cwd(), "/public", user.image);
@@ -94,13 +121,17 @@ export default async function handler(
         .update({ image: "" })
         .eq("id", userId);
 
-      if (updateErr) return res.status(500).json({ error: "Failed to remove avatar from DB" });
+      if (updateErr)
+        return res
+          .status(500)
+          .json({ error: "Failed to remove avatar from DB" });
 
       return res.status(200).json({ message: "Avatar removed" });
-    } 
-    else {
+    } else {
       res.setHeader("Allow", ["PUT", "DELETE"]);
-      return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+      return res
+        .status(405)
+        .json({ error: `Method ${req.method} Not Allowed` });
     }
   } catch (err) {
     console.error("Server error /api/setting/user/update:", err);

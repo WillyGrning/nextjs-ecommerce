@@ -29,6 +29,14 @@ type FilterState = {
   sortBy: string;
 };
 
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
+};
+
 export default function CategoryPage() {
   const router = useRouter();
   const { slug } = router.query;
@@ -204,7 +212,7 @@ export default function CategoryPage() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+              className="flex items-center gap-2 px-4 cursor-pointer py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
             >
               <svg
                 className="w-5 h-5"
@@ -229,7 +237,7 @@ export default function CategoryPage() {
                 onChange={(e) =>
                   setFilters({ ...filters, sortBy: e.target.value })
                 }
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="px-4 py-2 border border-gray-300 cursor-pointer rounded-lg focus:border-blue-500 focus:outline-none"
               >
                 <option value="newest">Newest</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -404,11 +412,11 @@ export default function CategoryPage() {
 
                     <div className="flex items-center gap-2">
                       <span className="text-xl font-bold text-gray-900">
-                        ${finalPrice.toFixed(2)}
+                        {formatCurrency(finalPrice)}
                       </span>
                       {hasDiscount && (
                         <span className="text-sm text-gray-500 line-through">
-                          ${product.price.toFixed(2)}
+                          {formatCurrency(product.price)}
                         </span>
                       )}
                     </div>

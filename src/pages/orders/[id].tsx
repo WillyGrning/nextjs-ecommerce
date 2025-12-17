@@ -142,7 +142,9 @@ export default function OrderDetailPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 text-lg mb-2">{error || "Order not found"}</p>
+          <p className="text-red-600 text-lg mb-2">
+            {error || "Order not found"}
+          </p>
           <button
             onClick={() => router.push("/orders")}
             className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -157,6 +159,27 @@ export default function OrderDetailPage() {
   const shipping = order.order_shipping;
   const payment = parsePayment(order.payment);
 
+  const normalizeStatus = (status?: string) =>
+    status?.trim().toUpperCase() ?? "";
+
+  const ORDER_TIMELINE = ["PLACED", "SHIPPED", "DELIVERED"] as const;
+
+  const STATUS_PROGRESS: Record<string, number> = {
+    PAID: 1,
+    PENDING: 1,
+    PROCESSING: 1,
+
+    SHIPPED: 2,
+
+    DELIVERED: 3,
+    COMPLETED: 3,
+  };
+
+  const isStepActive = (currentStatus: string, stepIndex: number) => {
+    const progress = STATUS_PROGRESS[currentStatus] ?? 0;
+    return progress >= stepIndex + 1;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -166,33 +189,67 @@ export default function OrderDetailPage() {
             onClick={() => router.push("/orders")}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             Back to Orders
           </button>
 
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Order Details</h1>
-              <p className="text-gray-600 mt-1">Order #{order.id.slice(0, 8).toUpperCase()}</p>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Order Details
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Order #{order.id.slice(0, 8).toUpperCase()}
+              </p>
             </div>
             <div className="flex gap-3">
               <button
                 onClick={handlePrint}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center gap-2"
+                className="px-4 py-2 text-sm cursor-pointer font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center gap-2"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                  />
                 </svg>
                 Print
               </button>
               <button
                 onClick={handleDownloadInvoice}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+                className="px-4 py-2 text-sm cursor-pointer font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
                 </svg>
                 Download Invoice
               </button>
@@ -209,7 +266,8 @@ export default function OrderDetailPage() {
                 <div>
                   <h2 className="text-2xl font-bold">Order {order.status}</h2>
                   <p className="text-sm mt-1">
-                    Placed on {new Date(order.created_at).toLocaleDateString("en-US", {
+                    Placed on{" "}
+                    {new Date(order.created_at).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
@@ -228,24 +286,50 @@ export default function OrderDetailPage() {
           {/* Order Timeline */}
           <div className="p-6 border-b border-gray-200 print:hidden">
             <h3 className="font-semibold text-gray-900 mb-4">Order Timeline</h3>
-            <div className="flex items-center gap-2">
-              <div className={`flex-1 h-2 rounded-full ${order.status === "PAID" || order.status === "SHIPPED" || order.status === "DELIVERED" ? "bg-green-500" : "bg-gray-300"}`}></div>
-              <div className={`flex-1 h-2 rounded-full ${order.status === "SHIPPED" || order.status === "DELIVERED" ? "bg-blue-500" : "bg-gray-300"}`}></div>
-              <div className={`flex-1 h-2 rounded-full ${order.status === "DELIVERED" ? "bg-purple-500" : "bg-gray-300"}`}></div>
-            </div>
-            <div className="flex justify-between mt-2 text-xs text-gray-600">
-              <span>Order Placed</span>
-              <span>Shipped</span>
-              <span>Delivered</span>
-            </div>
+
+            {(() => {
+              const status = normalizeStatus(order.status);
+
+              return (
+                <>
+                  <div className="flex items-center gap-2">
+                    {ORDER_TIMELINE.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`flex-1 h-2 rounded-full transition-colors ${
+                          isStepActive(status, index)
+                            ? index === 0
+                              ? "bg-emerald-500"
+                              : index === 1
+                              ? "bg-sky-500"
+                              : "bg-indigo-500"
+                            : "bg-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="flex justify-between mt-2 text-xs text-gray-600">
+                    <span>Order Placed</span>
+                    <span>Shipped</span>
+                    <span>Delivered</span>
+                  </div>
+                </>
+              );
+            })()}
           </div>
 
           {/* Order Items */}
           <div className="p-6 border-b border-gray-200">
-            <h3 className="font-semibold text-gray-900 mb-4 text-lg">Order Items</h3>
+            <h3 className="font-semibold text-gray-900 mb-4 text-lg">
+              Order Items
+            </h3>
             <div className="space-y-4">
               {order.order_items.map((item) => (
-                <div key={item.id} className="flex items-center gap-4 pb-4 border-b border-gray-100 last:border-0">
+                <div
+                  key={item.id}
+                  className="flex items-center gap-4 pb-4 border-b border-gray-100 last:border-0"
+                >
                   <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                     {item.products?.image ? (
                       <Image
@@ -257,16 +341,32 @@ export default function OrderDetailPage() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        <svg
+                          className="w-10 h-10"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
                         </svg>
                       </div>
                     )}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900 text-lg">{item.products?.name || "Product"}</h4>
-                    <p className="text-gray-600 mt-1">Quantity: {item.quantity}</p>
-                    <p className="text-gray-600">Price: ${item.price_at_time.toFixed(2)} each</p>
+                    <h4 className="font-semibold text-gray-900 text-lg">
+                      {item.products?.name || "Product"}
+                    </h4>
+                    <p className="text-gray-600 mt-1">
+                      Quantity: {item.quantity}
+                    </p>
+                    <p className="text-gray-600">
+                      Price: ${item.price_at_time.toFixed(2)} each
+                    </p>
                   </div>
                   <div className="text-right">
                     <p className="text-xl font-bold text-gray-900">
@@ -284,14 +384,31 @@ export default function OrderDetailPage() {
             {shipping && (
               <div>
                 <h3 className="font-semibold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                  <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <svg
+                    className="w-5 h-5 text-blue-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
                   </svg>
                   Shipping Address
                 </h3>
                 <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                  <p className="font-semibold text-gray-900">{shipping.full_name}</p>
+                  <p className="font-semibold text-gray-900">
+                    {shipping.full_name}
+                  </p>
                   <p className="text-gray-700">{shipping.home_address}</p>
                   <p className="text-gray-700">
                     {shipping.city}, {shipping.state} {shipping.zip_code}
@@ -305,11 +422,14 @@ export default function OrderDetailPage() {
                   <p className="text-gray-700">✉️ {shipping.email}</p>
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <p className="text-sm text-gray-600">
-                      <span className="font-medium">Shipping Method:</span> {shipping.shipping_method}
+                      <span className="font-medium">Shipping Method:</span>{" "}
+                      {shipping.shipping_method}
                     </p>
                     <p className="text-sm text-gray-600 mt-1">
                       <span className="font-medium">Shipping Cost:</span>{" "}
-                      {shipping.shipping_cost === 0 ? "FREE" : `$${shipping.shipping_cost.toFixed(2)}`}
+                      {shipping.shipping_cost === 0
+                        ? "FREE"
+                        : `$${shipping.shipping_cost.toFixed(2)}`}
                     </p>
                   </div>
                 </div>
@@ -319,8 +439,18 @@ export default function OrderDetailPage() {
             {/* Payment & Summary */}
             <div>
               <h3 className="font-semibold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                <svg
+                  className="w-5 h-5 text-blue-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                  />
                 </svg>
                 Payment Information
               </h3>
@@ -336,28 +466,38 @@ export default function OrderDetailPage() {
                 <div className="space-y-3 pt-2">
                   <div className="flex justify-between">
                     <span className="text-gray-700">Subtotal:</span>
-                    <span className="text-gray-900 font-medium">${order.subtotal.toFixed(2)}</span>
+                    <span className="text-gray-900 font-medium">
+                      ${order.subtotal.toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-700">Shipping:</span>
                     <span className="text-gray-900 font-medium">
-                      {order.shipping_cost === 0 ? "FREE" : `$${order.shipping_cost.toFixed(2)}`}
+                      {order.shipping_cost === 0
+                        ? "FREE"
+                        : `$${order.shipping_cost.toFixed(2)}`}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-700">Tax (10%):</span>
-                    <span className="text-gray-900 font-medium">${order.tax.toFixed(2)}</span>
+                    <span className="text-gray-900 font-medium">
+                      ${order.tax.toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between pt-3 border-t-2 border-gray-300 text-lg">
                     <span className="font-bold text-gray-900">Total:</span>
-                    <span className="font-bold text-gray-900">${order.total.toFixed(2)}</span>
+                    <span className="font-bold text-gray-900">
+                      ${order.total.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>
 
               {/* Order Info */}
               <div className="mt-6 bg-blue-50 rounded-lg p-4 border border-blue-200">
-                <h4 className="font-semibold text-blue-900 mb-2">Order Information</h4>
+                <h4 className="font-semibold text-blue-900 mb-2">
+                  Order Information
+                </h4>
                 <div className="space-y-1 text-sm">
                   <p className="text-blue-800">
                     <span className="font-medium">Order ID:</span> {order.id}
@@ -380,15 +520,16 @@ export default function OrderDetailPage() {
             <div className="text-center">
               <h3 className="font-semibold text-gray-900 mb-2">Need Help?</h3>
               <p className="text-gray-600 mb-4">
-                If you have any questions about your order, please contact our support team.
+                If you have any questions about your order, please contact our
+                support team.
               </p>
               <div className="flex justify-center gap-3">
-                <button className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
+                <button className="px-6 py-2 text-sm cursor-pointer font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
                   Contact Support
                 </button>
                 <button
                   onClick={() => router.push("/orders")}
-                  className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                  className="px-6 py-2 text-sm cursor-pointer font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
                 >
                   View All Orders
                 </button>

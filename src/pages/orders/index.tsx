@@ -82,21 +82,26 @@ export default function OrdersPage() {
     fetchOrdersData();
   }, [session]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "PAID":
-        return "bg-green-100 text-green-800";
-      case "PENDING":
-        return "bg-yellow-100 text-yellow-800";
-      case "SHIPPED":
-        return "bg-blue-100 text-blue-800";
-      case "DELIVERED":
-        return "bg-purple-100 text-purple-800";
-      case "CANCELLED":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
+  const normalizeStatus = (status?: string): string =>
+    status?.trim().toUpperCase() ?? "";
+
+  const STATUS_STYLES: Record<string, string> = {
+    PAID: "bg-emerald-100 text-emerald-800",
+    COMPLETED: "bg-emerald-100 text-emerald-800",
+
+    PENDING: "bg-amber-100 text-amber-800",
+    PROCESSING: "bg-amber-100 text-amber-800",
+
+    SHIPPED: "bg-sky-100 text-sky-800",
+    DELIVERED: "bg-indigo-100 text-indigo-800",
+
+    CANCELLED: "bg-rose-100 text-rose-800",
+    FAILED: "bg-rose-100 text-rose-800",
+  };
+
+  const getStatusColor = (status?: string): string => {
+    const normalizedStatus = normalizeStatus(status);
+    return STATUS_STYLES[normalizedStatus] ?? "bg-gray-100 text-gray-800";
   };
 
   const parsePayment = (paymentStr: string) => {
@@ -149,9 +154,7 @@ export default function OrdersPage() {
         {/* Header */}
         <div className="mb-8 mt-16">
           <h1 className="text-3xl font-bold text-gray-900">My Orders</h1>
-          <p className="mt-2 text-gray-600">
-            Track and manage your orders
-          </p>
+          <p className="mt-2 text-gray-600">Track and manage your orders</p>
         </div>
 
         {orders.length === 0 ? (
@@ -236,15 +239,10 @@ export default function OrdersPage() {
 
                   {/* Order Items */}
                   <div className="p-6 border-b border-gray-200">
-                    <h4 className="font-semibold text-gray-900 mb-4">
-                      Items
-                    </h4>
+                    <h4 className="font-semibold text-gray-900 mb-4">Items</h4>
                     <div className="space-y-4">
                       {order.order_items?.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center gap-4"
-                        >
+                        <div key={item.id} className="flex items-center gap-4">
                           <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                             {item.products?.image ? (
                               <Image
@@ -324,7 +322,8 @@ export default function OrdersPage() {
                           </p>
                           <p>{shipping.home_address}</p>
                           <p>
-                            {shipping.city}, {shipping.state} {shipping.zip_code}
+                            {shipping.city}, {shipping.state}{" "}
+                            {shipping.zip_code}
                           </p>
                           <p>{shipping.country}</p>
                           {shipping.phone_number && (
@@ -334,7 +333,9 @@ export default function OrdersPage() {
                         </div>
                         <div className="mt-3 pt-3 border-t border-gray-200">
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium">Shipping Method:</span>{" "}
+                            <span className="font-medium">
+                              Shipping Method:
+                            </span>{" "}
                             {shipping.shipping_method}
                           </p>
                         </div>
@@ -403,7 +404,7 @@ export default function OrdersPage() {
                   <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
                     <button
                       onClick={() => router.push(`/orders/${order.id}`)}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                      className="px-4 py-2 text-sm cursor-pointer font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
                     >
                       View Details
                     </button>

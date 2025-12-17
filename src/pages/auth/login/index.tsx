@@ -1,30 +1,45 @@
-import LoginView from '@/pages/views/LoginView';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { signIn } from "next-auth/react";
+import LoginView from "@/pages/views/LoginView";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
 
 export default function Login() {
-    const router = useRouter();
-    const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent, email: string, password: string) => {
-        e.preventDefault();
-        setLoading(true);
+  useEffect(() => {
+    if (status !== "authenticated") return;
 
-        const res = await signIn("credentials", {
-            redirect: false,
-            email,
-            password,
-        });
+    if (session.user.role === "admin") {
+      router.replace("/admin");
+    } else {
+      router.replace("/");
+    }
+  }, [status, session, router]);
 
-        setLoading(false);
+  const handleSubmit = async (
+    e: React.FormEvent,
+    email: string,
+    password: string
+  ) => {
+    e.preventDefault();
+    setLoading(true);
 
-        if (res?.error) {
-            alert(res.error || 'Login failed');
-        } else {
-            router.push('/');
-        }
-    };
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
 
-    return <LoginView handleSubmit={handleSubmit} loading={loading} />;
+    setLoading(false);
+
+    if (res?.error) {
+      alert(res.error || "Login failed");
+    } else {
+      router.push("/");
+    }
+  };
+
+  return <LoginView handleSubmit={handleSubmit} loading={loading} />;
 }

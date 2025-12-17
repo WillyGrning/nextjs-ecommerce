@@ -399,6 +399,7 @@ export type Database = {
           rating: number | null
           sales: number | null
           specification: Json | null
+          status: string | null
           stock: number | null
         }
         Insert: {
@@ -415,6 +416,7 @@ export type Database = {
           rating?: number | null
           sales?: number | null
           specification?: Json | null
+          status?: string | null
           stock?: number | null
         }
         Update: {
@@ -431,6 +433,7 @@ export type Database = {
           rating?: number | null
           sales?: number | null
           specification?: Json | null
+          status?: string | null
           stock?: number | null
         }
         Relationships: [
@@ -439,6 +442,35 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_summary: {
+        Row: {
+          product_id: string
+          product_name: string
+          qty_sold: number
+          total_revenue: number
+        }
+        Insert: {
+          product_id: string
+          product_name: string
+          qty_sold?: number
+          total_revenue?: number
+        }
+        Update: {
+          product_id?: string
+          product_name?: string
+          qty_sold?: number
+          total_revenue?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_product"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -495,6 +527,8 @@ export type Database = {
           image: string | null
           password: string | null
           phone_number: string | null
+          reset_token: string | null
+          reset_token_expires: string | null
           role: string | null
           type: string | null
         }
@@ -507,6 +541,8 @@ export type Database = {
           image?: string | null
           password?: string | null
           phone_number?: string | null
+          reset_token?: string | null
+          reset_token_expires?: string | null
           role?: string | null
           type?: string | null
         }
@@ -519,6 +555,8 @@ export type Database = {
           image?: string | null
           password?: string | null
           phone_number?: string | null
+          reset_token?: string | null
+          reset_token_expires?: string | null
           role?: string | null
           type?: string | null
         }
