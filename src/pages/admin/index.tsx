@@ -1,8 +1,28 @@
 import DashboardView from "./views/DashboardView";
-import { useSession } from "next-auth/react";
+import UnauthorizedView from "./views/unauthorized";
+import { adminGuard } from "@/lib/auth/adminGuard";
+import type { Session } from "next-auth";
 
-export default function AdminDashboard() {
-  const { data: session } = useSession();
+interface AdminPageProps {
+  unauthorized: boolean;
+  user?: {
+    email?: string | null;
+    role?: string;
+  };
+  session?: Session | null;
+}
 
-  return <DashboardView session={session} />;
+export const getServerSideProps = adminGuard;
+
+export default function AdminDashboard(props: AdminPageProps) {
+  if (props.unauthorized) {
+    return (
+      <UnauthorizedView
+        email={props.user?.email ?? undefined} 
+        role={props.user?.role ?? undefined}
+      />
+    );
+  }
+
+  return <DashboardView session={props.session ?? null} />;
 }

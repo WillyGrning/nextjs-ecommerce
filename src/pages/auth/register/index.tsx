@@ -8,12 +8,11 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (
-    e: React.FormEvent,
     name: string,
     email: string,
     password: string
   ) => {
-    e.preventDefault();
+    // e.preventDefault();
     setLoading(true);
 
     try {
@@ -51,7 +50,7 @@ export default function Register() {
 
   return (
     <>
-      <Toaster /> {/* wajib ditaruh di atas/root component */}
+      <Toaster position="top-right" /> {/* wajib ditaruh di atas/root component */}
       <RegisterView handleSubmit={handleSubmit} loading={loading} />
     </>
   );
