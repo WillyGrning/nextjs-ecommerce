@@ -19,6 +19,14 @@ type Transaction = {
   status: string;
 };
 
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
+};
+
 export default function BillingTab() {
   const { data: session } = useSession();
   const [cards, setCards] = useState<PaymentCard[]>([]);
@@ -189,30 +197,30 @@ export default function BillingTab() {
 
   return (
     <div className="p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Billing & Payment</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Penagihan & Pembayaran</h2>
       
       {/* Payment Methods */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Payment Methods</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Metode Pembayaran</h3>
           <button
             onClick={() => setShowAddCard(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            Add Card
+            Tambah Kartu
           </button>
         </div>
 
         {cards.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-xl">
             <CreditCard className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 mb-4">No payment methods added yet</p>
+            <p className="text-gray-600 mb-4">Tidak ada metode pembayaran yang ditambahkan</p>
             <button
               onClick={() => setShowAddCard(true)}
               className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
             >
-              Add Your First Card
+              Tambah Kartu Pertama Anda
             </button>
           </div>
         ) : (
@@ -249,7 +257,7 @@ export default function BillingTab() {
                       onClick={() => handleSetDefault(card.id)}
                       className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                     >
-                      Set as Default
+                      Atur sebagai default
                     </button>
                   )}
                   <button
@@ -268,10 +276,10 @@ export default function BillingTab() {
 
       {/* Recent Transactions */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Transaksi Terbaru</h3>
         {transactions.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-xl">
-            <p className="text-gray-600">No transactions yet</p>
+            <p className="text-gray-600">Tidak ada transaksi</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -290,7 +298,7 @@ export default function BillingTab() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-gray-900">${transaction.total.toFixed(2)}</p>
+                  <p className="font-bold text-gray-900">{formatCurrency(transaction.total)}</p>
                   <span className="inline-flex items-center gap-1 text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
                     <Check className="w-3 h-3" />
                     {transaction.status}

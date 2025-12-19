@@ -47,7 +47,7 @@ export function useFavorite() {
 
       const data = await res.json();
       if (!res.ok) toast.error(data.error || "Failed to add to favorites");
-      else toast.success("Added to favorites!");
+      else toast.success("Ditambahkan ke favorit!");
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong");
@@ -74,7 +74,7 @@ export function useCart() {
 
       const data = await res.json();
       if (!res.ok) toast.error(data.error || "Failed to add to cart");
-      else toast.success("Added to cart!");
+      else toast.success("Ditambahkan ke keranjang!");
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong");
@@ -234,10 +234,10 @@ export default function ProductPage() {
               href="/"
               className="text-gray-500 hover:text-blue-600 cursor-pointer transition"
             >
-              Home
+              Beranda
             </Link>
             <span className="text-gray-400">/</span>
-            <span className="text-gray-900 font-medium">Products</span>
+            <span className="text-gray-900 font-medium">Produk</span>
           </div>
         </div>
       </div>
@@ -251,7 +251,7 @@ export default function ProductPage() {
               <div className="mb-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                   <SlidersHorizontal className="w-5 h-5" />
-                  Categories
+                  Kategori
                 </h3>
                 <div className="space-y-2">
                   {categoryList.map((cat) => (
@@ -276,7 +276,7 @@ export default function ProductPage() {
               {/* Price Range */}
               <div className="mb-8 pb-8 border-b">
                 <h3 className="text-base font-semibold text-gray-900 mb-4">
-                  Price Range
+                  Rentang Harga
                 </h3>
                 <div className="space-y-3">
                   {(
@@ -363,7 +363,7 @@ export default function ProductPage() {
             <div className="bg-white rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  All Products
+                  Semua Produk
                 </h1>
                 {/* <p className="text-sm text-gray-500 mt-1">Showing 1-3 of 156 results</p> */}
               </div>
@@ -554,7 +554,7 @@ export default function ProductPage() {
                         className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 cursor-pointer"
                       >
                         <ShoppingCart className="w-5 h-5" />
-                        {adding === product.id ? "Adding..." : "Add to Cart"}
+                        {adding === product.id ? "Menunggu..." : "Tambah ke Keranjang"}
                       </button>
                     </div>
                   </div>

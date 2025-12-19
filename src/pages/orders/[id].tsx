@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { OrderPayment } from "@/types/order";
+import { format } from "path";
 
 type OrderItem = {
   id: string;
@@ -35,11 +37,19 @@ type Order = {
   shipping_cost: number;
   tax: number;
   total: number;
-  payment: string;
   created_at: string;
   updated_at: string;
   order_items: OrderItem[];
   order_shipping: OrderShipping | null;
+  order_payments: OrderPayment | null;
+};
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
 };
 
 export default function OrderDetailPage() {
@@ -149,7 +159,7 @@ export default function OrderDetailPage() {
             onClick={() => router.push("/orders")}
             className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Back to Orders
+            Kembali ke Pesanan
           </button>
         </div>
       </div>
@@ -157,7 +167,7 @@ export default function OrderDetailPage() {
   }
 
   const shipping = order.order_shipping;
-  const payment = parsePayment(order.payment);
+  const payment = order.order_payments;
 
   const normalizeStatus = (status?: string) =>
     status?.trim().toUpperCase() ?? "";
@@ -202,16 +212,16 @@ export default function OrderDetailPage() {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Back to Orders
+            Kembali ke Pesanan
           </button>
 
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Order Details
+                Detail Pesanan
               </h1>
               <p className="text-gray-600 mt-1">
-                Order #{order.id.slice(0, 8).toUpperCase()}
+                Pesanan #{order.id.slice(0, 8).toUpperCase()}
               </p>
             </div>
             <div className="flex gap-3">
@@ -266,7 +276,7 @@ export default function OrderDetailPage() {
                 <div>
                   <h2 className="text-2xl font-bold">Order {order.status}</h2>
                   <p className="text-sm mt-1">
-                    Placed on{" "}
+                    Dibuat pada{" "}
                     {new Date(order.created_at).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
@@ -278,14 +288,14 @@ export default function OrderDetailPage() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold">${order.total.toFixed(2)}</p>
+                <p className="text-3xl font-bold">{formatCurrency(order.total)}</p>
               </div>
             </div>
           </div>
 
           {/* Order Timeline */}
           <div className="p-6 border-b border-gray-200 print:hidden">
-            <h3 className="font-semibold text-gray-900 mb-4">Order Timeline</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">Timeline Pesanan</h3>
 
             {(() => {
               const status = normalizeStatus(order.status);
@@ -310,9 +320,9 @@ export default function OrderDetailPage() {
                   </div>
 
                   <div className="flex justify-between mt-2 text-xs text-gray-600">
-                    <span>Order Placed</span>
-                    <span>Shipped</span>
-                    <span>Delivered</span>
+                    <span>Pesanan Dibuat</span>
+                    <span>Diproses</span>
+                    <span>Dikirim</span>
                   </div>
                 </>
               );
@@ -322,7 +332,7 @@ export default function OrderDetailPage() {
           {/* Order Items */}
           <div className="p-6 border-b border-gray-200">
             <h3 className="font-semibold text-gray-900 mb-4 text-lg">
-              Order Items
+              Item Pesanan
             </h3>
             <div className="space-y-4">
               {order.order_items.map((item) => (
@@ -362,15 +372,15 @@ export default function OrderDetailPage() {
                       {item.products?.name || "Product"}
                     </h4>
                     <p className="text-gray-600 mt-1">
-                      Quantity: {item.quantity}
+                      Jumlah: {item.quantity}
                     </p>
                     <p className="text-gray-600">
-                      Price: ${item.price_at_time.toFixed(2)} each
+                      Harga: {formatCurrency(item.price_at_time)} / satuan
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-xl font-bold text-gray-900">
-                      ${(item.quantity * item.price_at_time).toFixed(2)}
+                      {formatCurrency(item.quantity * item.price_at_time)}
                     </p>
                   </div>
                 </div>
@@ -403,7 +413,7 @@ export default function OrderDetailPage() {
                       d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                     />
                   </svg>
-                  Shipping Address
+                  Alamat Pengiriman
                 </h3>
                 <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                   <p className="font-semibold text-gray-900">
@@ -422,14 +432,14 @@ export default function OrderDetailPage() {
                   <p className="text-gray-700">✉️ {shipping.email}</p>
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <p className="text-sm text-gray-600">
-                      <span className="font-medium">Shipping Method:</span>{" "}
+                      <span className="font-medium">Metode Pengiriman:</span>{" "}
                       {shipping.shipping_method}
                     </p>
                     <p className="text-sm text-gray-600 mt-1">
-                      <span className="font-medium">Shipping Cost:</span>{" "}
+                      <span className="font-medium">Biaya Pengiriman:</span>{" "}
                       {shipping.shipping_cost === 0
                         ? "FREE"
-                        : `$${shipping.shipping_cost.toFixed(2)}`}
+                        : `${formatCurrency(shipping.shipping_cost)}`}
                     </p>
                   </div>
                 </div>
@@ -452,14 +462,18 @@ export default function OrderDetailPage() {
                     d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
                   />
                 </svg>
-                Payment Information
+                Informasi Pembayaran
               </h3>
               <div className="bg-gray-50 rounded-lg p-4 space-y-3">
                 <div className="flex justify-between items-center pb-3 border-b border-gray-200">
-                  <span className="text-gray-700">Payment Method:</span>
+                  <span className="text-gray-700">Metode Pembayaran:</span>
                   <span className="font-semibold text-gray-900">
-                    {payment.method?.toUpperCase() || "N/A"}
-                    {payment.last4 && ` ****${payment.last4}`}
+                    {payment
+                      ? payment.payment_method.toUpperCase() +
+                        (payment.payment_cards?.last4
+                          ? ` ****${payment.payment_cards.last4}`
+                          : "")
+                      : "N/A"}
                   </span>
                 </div>
 
@@ -467,27 +481,27 @@ export default function OrderDetailPage() {
                   <div className="flex justify-between">
                     <span className="text-gray-700">Subtotal:</span>
                     <span className="text-gray-900 font-medium">
-                      ${order.subtotal.toFixed(2)}
+                      {formatCurrency(order.subtotal)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-700">Shipping:</span>
+                    <span className="text-gray-700">Pengiriman:</span>
                     <span className="text-gray-900 font-medium">
                       {order.shipping_cost === 0
                         ? "FREE"
-                        : `$${order.shipping_cost.toFixed(2)}`}
+                        : `${formatCurrency(order.shipping_cost)}`}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-700">Tax (10%):</span>
+                    <span className="text-gray-700">Pajak (10%):</span>
                     <span className="text-gray-900 font-medium">
-                      ${order.tax.toFixed(2)}
+                      {formatCurrency(order.tax)}
                     </span>
                   </div>
                   <div className="flex justify-between pt-3 border-t-2 border-gray-300 text-lg">
                     <span className="font-bold text-gray-900">Total:</span>
                     <span className="font-bold text-gray-900">
-                      ${order.total.toFixed(2)}
+                      {formatCurrency(order.total)}
                     </span>
                   </div>
                 </div>
@@ -496,18 +510,18 @@ export default function OrderDetailPage() {
               {/* Order Info */}
               <div className="mt-6 bg-blue-50 rounded-lg p-4 border border-blue-200">
                 <h4 className="font-semibold text-blue-900 mb-2">
-                  Order Information
+                  Informasi Pesanan
                 </h4>
                 <div className="space-y-1 text-sm">
                   <p className="text-blue-800">
-                    <span className="font-medium">Order ID:</span> {order.id}
+                    <span className="font-medium">ID Pesanan:</span> {order.id}
                   </p>
                   <p className="text-blue-800">
-                    <span className="font-medium">Order Date:</span>{" "}
+                    <span className="font-medium">Tanggal Pesanan:</span>{" "}
                     {new Date(order.created_at).toLocaleDateString()}
                   </p>
                   <p className="text-blue-800">
-                    <span className="font-medium">Last Updated:</span>{" "}
+                    <span className="font-medium">Terakhir Diperbarui:</span>{" "}
                     {new Date(order.updated_at).toLocaleDateString()}
                   </p>
                 </div>
@@ -518,20 +532,19 @@ export default function OrderDetailPage() {
           {/* Support Section */}
           <div className="p-6 bg-gray-50 border-t border-gray-200 print:hidden">
             <div className="text-center">
-              <h3 className="font-semibold text-gray-900 mb-2">Need Help?</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">Butuh Bantuan?</h3>
               <p className="text-gray-600 mb-4">
-                If you have any questions about your order, please contact our
-                support team.
+                Jika Anda memiliki pertanyaan tentang pesanan Anda, silakan hubungi tim dukungan kami.
               </p>
               <div className="flex justify-center gap-3">
                 <button className="px-6 py-2 text-sm cursor-pointer font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
-                  Contact Support
+                  Hubungi Dukungan
                 </button>
                 <button
                   onClick={() => router.push("/orders")}
                   className="px-6 py-2 text-sm cursor-pointer font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
                 >
-                  View All Orders
+                  Kembali ke Pesanan
                 </button>
               </div>
             </div>

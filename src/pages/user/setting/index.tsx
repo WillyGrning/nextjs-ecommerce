@@ -72,10 +72,10 @@ export default function UserSetting() {
 
 
   const tabs = [
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'security', label: 'Security', icon: Shield },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'billing', label: 'Billing', icon: CreditCard },
+    { id: 'profile', label: 'Profil', icon: User },
+    { id: 'security', label: 'Keamanan', icon: Shield },
+    { id: 'notifications', label: 'Notifikasi', icon: Bell },
+    { id: 'billing', label: 'Pembayaran', icon: CreditCard },
   ];
 
   const handleSave = async () => {
@@ -223,12 +223,12 @@ export default function UserSetting() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-8 py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Account Settings</h1>
-          <p className="text-gray-600">Manage your account preferences and settings</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Pengaturan Akun</h1>
+          <p className="text-gray-600">Kelola preferensi dan pengaturan akun Anda</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -263,7 +263,7 @@ export default function UserSetting() {
               {/* Profile Tab */}
               {activeTab === 'profile' && (
                 <div className="p-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Profile Information</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Informasi Akun</h2>
                   
                   {/* Avatar Upload */}
                   <div className="flex items-center gap-6 mb-8 pb-8 border-b border-gray-200">
@@ -282,20 +282,20 @@ export default function UserSetting() {
                       </button>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-1">Profile Photo</h3>
-                      <p className="text-sm text-gray-500 mb-3">Update your profile picture</p>
+                      <h3 className="font-semibold text-gray-900 mb-1">Foto Profil</h3>
+                      <p className="text-sm text-gray-500 mb-3">Upload foto profil</p>
                       <div className="flex gap-2">
                         <button
                           onClick={() => fileInputRef.current?.click()}
                           className="px-4 py-2 bg-blue-600 text-white cursor-pointer rounded-lg hover:bg-blue-700 transition text-sm font-medium"
                         >
-                          Upload New
+                          Upload Baru
                         </button>
                         <button
                           onClick={handleRemoveAvatar} 
                           className="px-4 py-2 bg-gray-100 text-gray-700 cursor-pointer rounded-lg hover:bg-gray-200 transition text-sm font-medium"
                         >
-                          Remove
+                          Hapus
                         </button>
                       </div>
                     </div>
@@ -313,7 +313,7 @@ export default function UserSetting() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Full Name
+                          Nama Lengkap
                         </label>
                         <div className="relative">
                           <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -331,7 +331,7 @@ export default function UserSetting() {
 
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Email Address
+                          Alamat Email
                         </label>
                         <div className="relative">
                           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -352,7 +352,7 @@ export default function UserSetting() {
 
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Phone Number
+                        Nomor Telepon
                       </label>
                       <div className="relative">
                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -372,7 +372,7 @@ export default function UserSetting() {
 
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Address
+                        Alamat
                       </label>
                       <div className="relative">
                         <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
@@ -404,7 +404,7 @@ export default function UserSetting() {
                         }
                         rows={4}
                         className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition resize-none"
-                        placeholder="Tell us about yourself..."
+                        placeholder="Ceritakan tentang diri Anda..."
                       />
                     </div>
                   </div>
@@ -414,15 +414,15 @@ export default function UserSetting() {
               {/* Security Tab */}
               {activeTab === 'security' && (
                 <div className="p-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Security Settings</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Pengaturan Keamanan</h2>
                   
                   {/* Change Password */}
                   <div className="mb-8 pb-8 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Change Password</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Ubah Kata Sandi</h3>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Current Password
+                          Kata Sandi Saat Ini
                         </label>
                         <div className="relative">
                           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -448,7 +448,7 @@ export default function UserSetting() {
 
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          New Password
+                          Kata Sandi Baru
                         </label>
                         <div className="relative">
                           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -470,12 +470,12 @@ export default function UserSetting() {
                             {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                           </button>
                         </div>
-                        <p className="text-xs text-gray-500 mt-2">Must be at least 8 characters</p>
+                        <p className="text-xs text-gray-500 mt-2">Minimal 8 karakter</p>
                       </div>
 
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Confirm New Password
+                          Konfirmasi Kata Sandi Baru
                         </label>
                         <div className="relative">
                           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -495,9 +495,9 @@ export default function UserSetting() {
 
                       <button 
                         onClick={handleUpdatePassword}
-                        className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+                        className="px-6 py-2.5 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 transition font-medium"
                       >
-                        Update Password
+                        Perbarui Kata Sandi
                       </button>
                     </div>
                   </div>
@@ -671,11 +671,11 @@ export default function UserSetting() {
               <div className="px-8 py-6 bg-gray-50 border-t border-gray-200">
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-gray-500">
-                    Last saved: 2 minutes ago
+                    Terakhir diubah: 2 hari yang lalu
                   </p>
                   <div className="flex gap-3">
                     <button className="px-6 py-2.5 border-2 border-gray-300 cursor-pointer text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium">
-                      Cancel
+                      Batal
                     </button>
                     <button
                       onClick={handleSave}
@@ -685,12 +685,12 @@ export default function UserSetting() {
                       {isSaving ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Saving...
+                          Menyimpan...
                         </>
                       ) : (
                         <>
                           <Save className="w-4 h-4" />
-                          Save Changes
+                          Simpan Perubahan
                         </>
                       )}
                     </button>

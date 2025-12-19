@@ -156,36 +156,37 @@ export default function Home({ products: initialProducts }: Props) {
                 Summer Sale - Up to 50% Off
               </div>
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                Discover Your
+                Temukan Gaya
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   {" "}
-                  Perfect Style
+                  Sempurna Anda
                 </span>
               </h1>
               <p className="text-lg text-gray-600 mb-8">
-                Explore our curated collection of premium products designed to
-                elevate your everyday experience.
+                {/* Explore our curated collection of premium products designed to
+                elevate your everyday experience. */}
+                Jelajahi koleksi produk premium kami yang dikurasi khusus untuk meningkatkan pengalaman sehari-hari Anda.
               </p>
               <div className="flex gap-4">
                 <a
                   href="#featured"
                   className="bg-blue-600 text-white px-8 py-4 rounded-full font-medium hover:bg-blue-700 transition shadow-lg hover:shadow-xl"
                 >
-                  Shop Now
+                  Belanja Sekarang
                 </a>
                 <button className="bg-white text-gray-700 px-8 py-4 rounded-full font-medium hover:bg-gray-50 transition border border-gray-200">
-                  View Deals
+                  Lihat Penawaran
                 </button>
               </div>
 
               <div className="flex gap-8 mt-12">
                 <div className="flex items-center gap-2">
                   <Shield className="w-5 h-5 text-blue-600" />
-                  <span className="text-sm text-gray-600">Secure Payment</span>
+                  <span className="text-sm text-gray-600">Pembayaran Aman</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-blue-600" />
-                  <span className="text-sm text-gray-600">Fast Delivery</span>
+                  <span className="text-sm text-gray-600">Pengiriman Cepat</span>
                 </div>
               </div>
             </div>
@@ -212,13 +213,13 @@ export default function Home({ products: initialProducts }: Props) {
         <div className="flex justify-between items-center mb-12">
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Featured Products
+              Produk Unggulan
             </h2>
-            <p className="text-gray-600">Handpicked items just for you</p>
+            <p className="text-gray-600">Pilihan terbaik untuk Anda</p>
           </div>
           <Link href="/products">
             <button className="text-blue-600 cursor-pointer font-medium hover:text-blue-700 transition">
-              View All →
+              Lihat Semua →
             </button>
           </Link>
         </div>
@@ -255,7 +256,7 @@ export default function Home({ products: initialProducts }: Props) {
                     </div>
                   )}
                   <button className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-gray-900 px-6 py-3 rounded-full font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
-                    Quick View
+                    Lihat Detail
                   </button>
                   <button
                     onClick={(e: React.MouseEvent<HTMLButtonElement>) => {

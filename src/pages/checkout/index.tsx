@@ -36,7 +36,12 @@ type CheckoutItem = {
   quantity: number;
   price_at_time?: number;
   products?: ProductPick | null;
-  // other fields ignored
+};
+
+type Promo = {
+  promoId: string;
+  discount: number;
+  finalSubtotal: number;
 };
 
 function safeJsonParse<T>(value: unknown): T | null {
@@ -82,6 +87,14 @@ function normalizeCheckoutItems(raw: unknown): CheckoutItem[] {
     .filter((v): v is CheckoutItem => v !== null);
 }
 
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
+};
+
 export default function CheckoutPage() {
   const router = useRouter();
   const [notification, setNotification] = useState<string | null>(null);
@@ -97,7 +110,7 @@ export default function CheckoutPage() {
     city: "",
     state: "",
     zipCode: "",
-    country: "United States",
+    // country: "Indonesia",
   });
 
   const [paymentInfo, setPaymentInfo] = useState({
@@ -107,110 +120,6 @@ export default function CheckoutPage() {
     cvv: "",
     saveCard: false,
   });
-
-  // read items from query or sessionStorage
-  //   useEffect(() => {
-  //     if (!router.isReady) return;
-
-  //     const tryParse = (raw: string | string[] | undefined): CheckoutItem[] | null => {
-  //       if (!raw) return null;
-  //       const asString = Array.isArray(raw) ? raw[0] : raw;
-  //       try {
-  //         // router may already have decoded, but try both safely
-  //         try {
-  //           return JSON.parse(asString);
-  //         } catch {
-  //           return JSON.parse(decodeURIComponent(asString));
-  //         }
-  //       } catch (err) {
-  //         console.error("Failed to parse checkout items from query:", err);
-  //         return null;
-  //       }
-  //     };
-
-  //     const parsed = safeJsonParse<unknown[]>(router.query.items);
-
-  //     if (Array.isArray(parsed)) {
-  //       const normalized: CheckoutItem[] = parsed.map((it) => {
-  //         if (typeof it !== "object" || it === null) {
-  //           throw new Error("Invalid checkout item format");
-  //         }
-
-  //         const item = it as Record<string, unknown>;
-  //         const product = item.products as Record<string, unknown> | null;
-
-  //         return {
-  //           id: String(item.id),
-  //           quantity: Number(item.quantity ?? 1),
-  //           price_at_time:
-  //             typeof item.price_at_time === "number"
-  //               ? item.price_at_time
-  //               : undefined,
-  //           products: product
-  //             ? {
-  //                 id: String(product.id),
-  //                 name: String(product.name ?? ""),
-  //                 image:
-  //                   typeof product.image === "string"
-  //                     ? product.image
-  //                     : null,
-  //                 price: Number(product.price ?? 0),
-  //                 stock:
-  //                   typeof product.stock === "number"
-  //                     ? product.stock
-  //                     : null,
-  //                 discount:
-  //                   typeof product.discount === "number"
-  //                     ? product.discount
-  //                     : null,
-  //               }
-  //             : null,
-  //         };
-  //       });
-
-  //       setCheckoutItems(normalized);
-
-  //       try {
-  //         sessionStorage.setItem(
-  //           "checkoutItems",
-  //           JSON.stringify(normalized)
-  //         );
-  //       } catch {
-  //         // ignore storage failure
-  //       }
-
-  //       hasInitialized.current = true;
-  //     }
-
-  //     // fallback: sessionStorage
-  //     try {
-  //       const raw = sessionStorage.getItem("checkoutItems");
-  //       if (raw) {
-  //         const parsed = JSON.parse(raw);
-  //         if (Array.isArray(parsed)) {
-  //           setCheckoutItems(
-  //             parsed.map((it: any) => ({
-  //               id: String(it.id),
-  //               quantity: Number(it.quantity ?? 1),
-  //               price_at_time: typeof it.price_at_time === "number" ? it.price_at_time : undefined,
-  //               products: it.products
-  //                 ? {
-  //                     id: String(it.products.id),
-  //                     name: String(it.products.name ?? ""),
-  //                     image: it.products.image ?? null,
-  //                     price: Number(it.products.price ?? 0),
-  //                     stock: typeof it.products.stock === "number" ? it.products.stock : null,
-  //                     discount: typeof it.products.discount === "number" ? it.products.discount : null
-  //                   }
-  //                 : null
-  //             }))
-  //           );
-  //         }
-  //       }
-  //     } catch (err) {
-  //       console.error("Failed to read checkoutItems from sessionStorage:", err);
-  //     }
-  //   }, [router.isReady, router.query.items]);
 
   const checkoutItems = useMemo<CheckoutItem[]>(() => {
     if (!router.isReady) return [];
@@ -233,6 +142,11 @@ export default function CheckoutPage() {
     return fromStorage;
   }, [router.isReady, router.query.items]);
 
+  const appliedPromo: Promo | null = useMemo(() => {
+    const raw = safeJsonParse<Promo>(sessionStorage.getItem("checkoutPromo"));
+    return raw ?? null;
+  }, []);
+
   // derived totals
   const subtotal = useMemo(() => {
     return checkoutItems.reduce((s, it) => {
@@ -242,11 +156,14 @@ export default function CheckoutPage() {
     }, 0);
   }, [checkoutItems]);
 
-  const shippingThreshold = 500;
-  const shippingCost = subtotal > shippingThreshold ? 0 : 15;
+  const discount = appliedPromo?.discount ?? 0;
+  const finalSubtotal = appliedPromo?.finalSubtotal ?? subtotal;
+
+  const shippingThreshold = 100000;
+  const shippingCost = subtotal > shippingThreshold ? 0 : 15000;
   const taxRate = 0.1; // simple 10% tax example
-  const tax = +(subtotal * taxRate);
-  const total = subtotal + shippingCost + tax;
+  const tax = +(finalSubtotal * taxRate);
+  const total = finalSubtotal + shippingCost + tax;
 
   // handlers
   const handleContinueToPayment = (e?: React.FormEvent) => {
@@ -286,46 +203,51 @@ export default function CheckoutPage() {
 
   const handlePlaceOrder = async () => {
     if (checkoutItems.length === 0) {
-        setNotification("No items to place order.");
-        return;
+      setNotification("No items to place order.");
+      return;
     }
 
     try {
-        const res = await fetch("/api/orders", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_id: session?.user.id,
-                items: checkoutItems.map(it => ({
-                product_id: it.products?.id,
-                quantity: it.quantity,
-                price: it.products?.price ?? it.price_at_time ?? 0,
-                })),
-                shipping: shippingInfo,
-                payment: {
-                method: "card",
-                last4: paymentInfo.cardNumber.slice(-4),
-                },
-            }),
-        });
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: session?.user.id,
+          items: checkoutItems.map((it) => ({
+            product_id: it.products?.id,
+            quantity: it.quantity,
+            price: it.products?.price ?? it.price_at_time ?? 0,
+          })),
+          shipping: shippingInfo,
+          payment: {
+            method: "card",
+            last4: paymentInfo.cardNumber.slice(-4),
+            cardNumber: paymentInfo.cardNumber,
+            cardName: paymentInfo.cardName,
+            expiryMonth: paymentInfo.expiryDate.split("/")[0],
+            expiryYear: paymentInfo.expiryDate.split("/")[1],
+          },
+          promo_code_id: appliedPromo?.promoId,
+          subtotal,
+          shippingCost,
+          tax,
+          total,
+        }),
+      });
 
-            if (!res.ok) {
-            throw new Error("Order creation failed");
-            }
+      if (!res.ok) throw new Error("Order creation failed");
 
-            const data: { order_id : string } = await res.json();
-
-            sessionStorage.removeItem("checkoutItems");
-
-            router.push(`/orders/success?orderId=${data.order_id}`);
-        } catch (err) {
-            console.error(err);
-            setNotification("Failed to place order.");
-            setTimeout(() => setNotification(null), 3000);
-        }
-    };
+      const data: { order_id: string } = await res.json();
+      sessionStorage.removeItem("checkoutItems");
+      router.push(`/orders/success?orderId=${data.order_id}`);
+    } catch (err) {
+      console.error(err);
+      setNotification("Failed to place order.");
+      setTimeout(() => setNotification(null), 3000);
+    }
+  };
 
   // quick guard: if no items, show prompt
   useEffect(() => {
@@ -350,19 +272,19 @@ export default function CheckoutPage() {
             className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-gray-900 mb-4"
           >
             <ArrowLeft className="w-5 h-5" />
-            Back to Cart
+            Kembali ke Keranjang
           </button>
           <h1 className="text-4xl font-bold text-gray-900">Checkout</h1>
-          <p className="text-gray-600">Complete your purchase</p>
+          <p className="text-gray-600">Selesaikan pembelian Anda</p>
         </div>
 
         {/* Progress Steps */}
         <div className="mb-8">
           <div className="flex items-center justify-between max-w-3xl mx-auto">
             {[
-              { number: 1, title: "Shipping", icon: Truck },
-              { number: 2, title: "Payment", icon: CreditCard },
-              { number: 3, title: "Review", icon: Package },
+              { number: 1, title: "Pengiriman", icon: Truck },
+              { number: 2, title: "Pembayaran", icon: CreditCard },
+              { number: 3, title: "Tinjau", icon: Package },
             ].map((step, index) => (
               <React.Fragment key={step.number}>
                 <div className="flex flex-col items-center flex-1">
@@ -412,7 +334,7 @@ export default function CheckoutPage() {
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
                   <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                     <MapPin className="w-6 h-6" />
-                    Shipping Information
+                    Informasi Pengiriman
                   </h2>
                 </div>
 
@@ -423,12 +345,12 @@ export default function CheckoutPage() {
                   {/* Contact */}
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 mb-4">
-                      Contact Information
+                      Informasi Kontak
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Full Name <span className="text-red-500">*</span>
+                          Nama Lengkap <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
                           <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -450,7 +372,7 @@ export default function CheckoutPage() {
 
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Email Address <span className="text-red-500">*</span>
+                          Alamat Email <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
                           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -472,7 +394,7 @@ export default function CheckoutPage() {
 
                       <div className="md:col-span-2">
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Phone Number
+                          Nomor Telepon
                         </label>
                         <div className="relative">
                           <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -486,7 +408,7 @@ export default function CheckoutPage() {
                               }))
                             }
                             className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
-                            placeholder="+1 (555) 000-0000"
+                            placeholder="+62 (8xx) xxxx-xxxx"
                           />
                         </div>
                       </div>
@@ -496,12 +418,12 @@ export default function CheckoutPage() {
                   {/* Address */}
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 mb-4">
-                      Shipping Address
+                      Alamat Pengiriman
                     </h3>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Street Address <span className="text-red-500">*</span>
+                          Alamat Jalan <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
@@ -521,7 +443,7 @@ export default function CheckoutPage() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            City <span className="text-red-500">*</span>
+                            Kota <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
@@ -540,7 +462,7 @@ export default function CheckoutPage() {
 
                         <div>
                           <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            State <span className="text-red-500">*</span>
+                            Provinsi <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
@@ -561,7 +483,7 @@ export default function CheckoutPage() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            ZIP Code <span className="text-red-500">*</span>
+                            Kode Pos <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
@@ -578,9 +500,9 @@ export default function CheckoutPage() {
                           />
                         </div>
 
-                        <div>
+                        {/* <div>
                           <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            Country
+                            Negara
                           </label>
                           <select
                             value={shippingInfo.country}
@@ -597,7 +519,7 @@ export default function CheckoutPage() {
                             <option>United Kingdom</option>
                             <option>Australia</option>
                           </select>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -616,8 +538,8 @@ export default function CheckoutPage() {
                           defaultChecked
                         />
                         <label htmlFor="standard" className="text-sm">
-                          Standard Delivery (3-5 days) — $
-                          {shippingCost.toFixed(2)}
+                          Standard Delivery (3-5 hari kerja) —
+                          {formatCurrency(shippingCost)}
                         </label>
                       </div>
                     </div>
@@ -627,7 +549,7 @@ export default function CheckoutPage() {
                     type="submit"
                     className="w-full cursor-pointer bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl"
                   >
-                    Continue to Payment
+                    Lanjut ke Pembayaran
                   </button>
                 </form>
               </div>
@@ -639,7 +561,7 @@ export default function CheckoutPage() {
                 <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
                   <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                     <CreditCard className="w-6 h-6" />
-                    Payment Information
+                    Informasi Pembayaran
                   </h2>
                 </div>
 
@@ -680,7 +602,7 @@ export default function CheckoutPage() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Card Number <span className="text-red-500">*</span>
+                        Nomor Kartu <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -700,7 +622,7 @@ export default function CheckoutPage() {
 
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Cardholder Name <span className="text-red-500">*</span>
+                        Nama Pemilik <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -720,7 +642,8 @@ export default function CheckoutPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Expiry Date <span className="text-red-500">*</span>
+                          Tanggal Kadaluarsa{" "}
+                          <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
@@ -774,9 +697,9 @@ export default function CheckoutPage() {
                       />
                       <label
                         htmlFor="saveCard"
-                        className="text-sm text-gray-700"
+                        className="text-sm cursor-pointer text-gray-700"
                       >
-                        Save card for future purchases
+                        Simpan informasi kartu untuk pembayaran di masa depan
                       </label>
                     </div>
                   </div>
@@ -785,15 +708,15 @@ export default function CheckoutPage() {
                     <button
                       type="button"
                       onClick={() => setCurrentStep(1)}
-                      className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-4 rounded-xl transition-all"
+                      className="flex-1 bg-gray-100 cursor-pointer hover:bg-gray-200 text-gray-700 font-bold py-4 rounded-xl transition-all"
                     >
-                      Back
+                      Kembali
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl"
+                      className="flex-1 bg-gradient-to-r cursor-pointer from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl"
                     >
-                      Review Order
+                      Tinjau Pesanan
                     </button>
                   </div>
                 </form>
@@ -808,7 +731,7 @@ export default function CheckoutPage() {
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                       <MapPin className="w-5 h-5 text-blue-600" />
-                      Shipping Address
+                      Alamat Pengiriman
                     </h3>
                     <button
                       onClick={() => setCurrentStep(1)}
@@ -824,7 +747,7 @@ export default function CheckoutPage() {
                       {shippingInfo.city}, {shippingInfo.state}{" "}
                       {shippingInfo.zipCode}
                     </p>
-                    <p>{shippingInfo.country}</p>
+                    {/* <p>{shippingInfo.country}</p> */}
                     <p className="pt-2">{shippingInfo.email}</p>
                     {shippingInfo.phone && <p>{shippingInfo.phone}</p>}
                   </div>
@@ -835,7 +758,7 @@ export default function CheckoutPage() {
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                       <CreditCard className="w-5 h-5 text-blue-600" />
-                      Payment Method
+                      Metode Pembayaran
                     </h3>
                     <button
                       onClick={() => setCurrentStep(2)}
@@ -863,31 +786,30 @@ export default function CheckoutPage() {
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
                   <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2 mb-4">
                     <Truck className="w-5 h-5 text-blue-600" />
-                    Shipping Method
+                    Metode Pengiriman
                   </h3>
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="font-semibold text-gray-900">
-                        Standard Delivery
-                      </p>
-                      <p className="text-sm text-gray-500">3-5 business days</p>
+                      <p className="font-semibold text-gray-900">Standar</p>
+                      <p className="text-sm text-gray-500">3-5 hari kerja</p>
                     </div>
                     <p className="font-bold text-gray-900">
-                      ${shippingCost.toFixed(2)}
+                      {formatCurrency(shippingCost)}
                     </p>
                   </div>
                 </div>
 
                 <button
                   onClick={handlePlaceOrder}
-                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-5 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-lg"
+                  className="w-full bg-gradient-to-r cursor-pointer from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-5 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-lg"
                 >
                   <Shield className="w-6 h-6" />
-                  Place Order — ${total.toFixed(2)}
+                  Bayar — {formatCurrency(total)}
                 </button>
 
                 <p className="text-center text-sm text-gray-500">
-                  By placing your order, you agree to our Terms and Conditions
+                  Dengan melakukan pemesanan, Anda menyetujui Syarat dan
+                  Ketentuan kami
                 </p>
               </div>
             )}
@@ -897,7 +819,9 @@ export default function CheckoutPage() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden sticky top-8">
               <div className="bg-gradient-to-br from-gray-900 to-gray-800 px-6 py-5">
-                <h2 className="text-2xl font-bold text-white">Order Summary</h2>
+                <h2 className="text-2xl font-bold text-white">
+                  Ringkasan Pemesanan
+                </h2>
               </div>
 
               <div className="p-6 space-y-6">
@@ -911,7 +835,7 @@ export default function CheckoutPage() {
                           className="text-blue-600"
                           onClick={() => router.push("/carts")}
                         >
-                          Return to cart
+                          Kembali ke Keranjang
                         </button>
                       </p>
                     </div>
@@ -935,12 +859,11 @@ export default function CheckoutPage() {
                             Qty: {item.quantity}
                           </p>
                           <p className="font-bold text-gray-900 mt-1">
-                            $
-                            {(
+                            {formatCurrency(
                               (item.products?.price ??
                                 item.price_at_time ??
                                 0) * item.quantity
-                            ).toFixed(2)}
+                            )}
                           </p>
                         </div>
                       </div>
@@ -953,25 +876,33 @@ export default function CheckoutPage() {
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
                     <span className="font-semibold">
-                      ${subtotal.toFixed(2)}
+                      {formatCurrency(subtotal)}
                     </span>
                   </div>
                   <div className="flex justify-between text-gray-600">
-                    <span>Shipping</span>
+                    <span>Pengiriman</span>
                     <span className="font-semibold">
-                      ${shippingCost.toFixed(2)}
+                      {formatCurrency(shippingCost)}
                     </span>
                   </div>
                   <div className="flex justify-between text-gray-600">
-                    <span>Tax</span>
-                    <span className="font-semibold">${tax.toFixed(2)}</span>
+                    <span>Pajak</span>
+                    <span className="font-semibold">{formatCurrency(tax)}</span>
                   </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Diskon</span>
+                      <span className="font-semibold">
+                        - {formatCurrency(discount)}
+                      </span>
+                    </div>
+                  )}
                   <div className="pt-3 border-t-2 border-gray-200 flex justify-between items-center">
                     <span className="text-lg font-bold text-gray-900">
                       Total
                     </span>
                     <span className="text-3xl font-bold text-blue-600">
-                      ${total.toFixed(2)}
+                      {formatCurrency(total)}
                     </span>
                   </div>
                 </div>

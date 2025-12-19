@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   const session = await getServerSession(req, res, authOptions);
-  if (!session?.user?.id) return res.status(401).json({ error: "Unauthorized" });
+  if (!session?.user?.id) return res.status(401).json({ error: "Login dibutuhkan" });
 
   const { productId, quantity = 1 } = req.body;
   if (!productId) return res.status(400).json({ error: "productId is required" });

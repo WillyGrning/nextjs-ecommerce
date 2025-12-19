@@ -18,6 +18,14 @@ type Order = {
   items: OrderItem[];
 };
 
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
+};
+
 export default function OrderSuccessPage() {
   const router = useRouter();
   const { orderId } = router.query;
@@ -62,17 +70,17 @@ export default function OrderSuccessPage() {
     <div className="max-w-3xl mx-auto py-25 px-6 text-center">
       <CheckCircle className="w-20 h-20 text-green-600 mx-auto mb-6" />
 
-      <h1 className="text-3xl font-bold mb-2">Order Successful 🎉</h1>
+      <h1 className="text-3xl font-bold mb-2">Pesanan Berhasil 🎉</h1>
       <p className="text-gray-600 mb-6">
-        Thank you! Your order has been placed successfully.
+        Terima kasih! Pesanan Anda telah berhasil dibuat.
       </p>
 
       <div className="bg-white shadow rounded-xl p-6 text-left">
-        <p><strong>Order ID:</strong> {order.id}</p>
+        <p><strong>ID Pesanan:</strong> {order.id}</p>
         <p><strong>Status:</strong> {order.status}</p>
-        <p><strong>Date:</strong> {new Date(order.created_at).toLocaleString()}</p>
+        <p><strong>Tanggal:</strong> {new Date(order.created_at).toLocaleString()}</p>
         <p className="mt-4 text-xl font-bold">
-          Total Paid: ${order.total.toFixed(2) ?? "0.00"}
+          Total Dibayar: {formatCurrency(order.total) ?? "0.00"}
         </p>
       </div>
 
@@ -80,7 +88,7 @@ export default function OrderSuccessPage() {
         onClick={() => router.push("/")}
         className="mt-8 px-6 py-3 bg-blue-600 text-white cursor-pointer rounded-lg"
       >
-        Continue Shopping
+        Kembali ke Beranda
       </button>
     </div>
   );

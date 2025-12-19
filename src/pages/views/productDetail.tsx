@@ -57,9 +57,9 @@ export default function ProductPage({ product }: ProductPageProps) {
   console.log(typeof product?.specification, product?.specification);
 
   const features = [
-    { icon: Truck, title: "Free Shipping", desc: "On orders over $100" },
-    { icon: Shield, title: "Secure Payment", desc: "100% protected" },
-    { icon: RefreshCw, title: "Easy Returns", desc: "30-day return policy" },
+    { icon: Truck, title: "Pengiriman Gratis", desc: "On orders over $100" },
+    { icon: Shield, title: "Pembayaran Aman", desc: "100% protected" },
+    { icon: RefreshCw, title: "Pengembalian Mudah", desc: "Jaminan 30 hari kembali" },
   ];
 
   const specs = Object.entries(specJson)
@@ -110,14 +110,14 @@ export default function ProductPage({ product }: ProductPageProps) {
               href="/"
               className="text-gray-500 hover:text-blue-600 cursor-pointer transition"
             >
-              Home
+              Beranda
             </Link>
             <span className="text-gray-400">/</span>
             <Link
               href="/products"
               className="text-gray-500 hover:text-blue-600 cursor-pointer transition"
             >
-              Product
+              Produk
             </Link>
             <span className="text-gray-400">/</span>
             <span className="text-gray-900 font-medium">{product.name}</span>
@@ -191,7 +191,7 @@ export default function ProductPage({ product }: ProductPageProps) {
             <div className="space-y-6">
               <div>
                 <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                  <span>Premium Collection</span>
+                  <span>Koleksi Premium</span>
                   {/* {product.is_active && (
                                 <>
                                 <span>•</span>
@@ -232,7 +232,7 @@ export default function ProductPage({ product }: ProductPageProps) {
                     })}
                   </div>
                   <span className="text-gray-600">
-                    {product.rating} ({product.sales || 0} sold)
+                    {product.rating} ({product.sales || 0} Terjual)
                   </span>
                 </div>
                 <div className="flex items-baseline gap-4">
@@ -292,7 +292,7 @@ export default function ProductPage({ product }: ProductPageProps) {
               {/* Size Selection */}
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-3">
-                  Size
+                  Ukuran
                 </label>
                 <div className="flex flex-wrap gap-3">
                   {sizes.map((size) => (
@@ -314,7 +314,7 @@ export default function ProductPage({ product }: ProductPageProps) {
               {/* Quantity */}
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-3">
-                  Quantity
+                  Jumlah
                 </label>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden">
@@ -352,7 +352,7 @@ export default function ProductPage({ product }: ProductPageProps) {
                   className="flex-1 bg-gray-900 text-white py-4 cursor-pointer rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  {adding === product.id ? "Adding..." : "Add to Cart"}
+                  {adding === product.id ? "Menunggu..." : "Tambah ke Keranjang"}
                 </button>
                 <button
                   onClick={() => setIsFavorite(!isFavorite)}
@@ -390,7 +390,7 @@ export default function ProductPage({ product }: ProductPageProps) {
                 {/* Specifications */}
                 <div className="bg-white rounded-2xl p-6 shadow-md">
                   <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                    Specifications
+                    Spesifikasi
                   </h3>
                   <div className="space-y-4">
                     {specs.map((spec, idx) => (
@@ -412,7 +412,7 @@ export default function ProductPage({ product }: ProductPageProps) {
                 {/* Product Features */}
                 <div className="bg-white rounded-2xl p-6 shadow-md">
                   <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                    Key Features
+                    Fitur Utama
                   </h3>
                   <ul className="space-y-3">
                     {keyFeatures.map((feature, idx) => (

@@ -60,7 +60,7 @@ export default function ProductSearchPage() {
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
 
   const { data, isLoading, error } = useSWR<ProductsApiResponse>(
-    `/api/admin/products?page=${page}&search=${encodeURIComponent(
+    `/api/products/search?page=${page}&search=${encodeURIComponent(
       searchInput
     )}&category=${category}&status=${status}&sortBy=${sortBy}`,
     fetcher,
@@ -103,24 +103,24 @@ export default function ProductSearchPage() {
     category || status || priceRange.min || priceRange.max || sortBy !== "name";
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div className="min-h-screen mt-16 bg-gray-50 p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Search Results</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Hasil Pencarian</h1>
             <p className="text-gray-500 mt-1">
               {searchInput
-                ? `Showing results for "${searchInput}"`
+                ? `Menampilkan hasil pencarian untuk "${searchInput}"`
                 : "All products"}
             </p>
           </div>
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="flex items-center gap-2 cursor-pointer px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
-            Back
+            Kembali
           </button>
         </div>
 
@@ -178,7 +178,7 @@ export default function ProductSearchPage() {
               }}
               className="px-4 py-2 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer focus:outline-none focus:border-indigo-500 transition-all text-sm"
             >
-              <option value="">All Categories</option>
+              <option value="">Semua Kategori</option>
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
@@ -195,9 +195,9 @@ export default function ProductSearchPage() {
               }}
               className="px-4 py-2 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer focus:outline-none focus:border-indigo-500 transition-all text-sm"
             >
-              <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="">Semua Status</option>
+              <option value="active">Aktif</option>
+              <option value="inactive">Tidak Aktif</option>
             </select>
 
             {/* Sort By */}
@@ -242,7 +242,7 @@ export default function ProductSearchPage() {
                 className="flex items-center gap-2 px-4 cursor-pointer py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
               >
                 <X className="w-4 h-4" />
-                Clear Filters
+                Hapus Filter
               </button>
             )}
           </div>
@@ -250,11 +250,11 @@ export default function ProductSearchPage() {
           {/* Results Count */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
             <p className="text-sm text-gray-600">
-              Found{" "}
+              Menemukan{" "}
               <span className="font-semibold text-gray-900">
                 {filteredProducts.length}
               </span>{" "}
-              products
+              produk
             </p>
           </div>
         </div>
@@ -281,10 +281,10 @@ export default function ProductSearchPage() {
               <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
                 <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  No products found
+                  Tidak ada produk ditemukan
                 </h3>
                 <p className="text-gray-500">
-                  Try adjusting your search or filters
+                  Coba sesuaikan pencarian atau filter Anda
                 </p>
               </div>
             ) : (
@@ -389,7 +389,7 @@ function ProductCard({ product }: { product: Product }) {
         <div className="absolute bottom-3 left-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button className="flex-1 bg-white cursor-pointer hover:bg-gray-50 py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-medium shadow-lg transition-colors">
             <Eye className="w-4 h-4" />
-            View
+            Lihat
           </button>
           <button
             onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
@@ -401,7 +401,7 @@ function ProductCard({ product }: { product: Product }) {
             className="flex-1 bg-indigo-600 cursor-pointer hover:bg-indigo-700 text-white py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-medium shadow-lg transition-colors"
           >
             <ShoppingCart className="w-4 h-4" />
-            {adding === product.id ? "Adding..." : "Add"}
+            {adding === product.id ? "Menambahkan..." : "Tambah"}
           </button>
         </div>
       </div>
@@ -425,7 +425,7 @@ function ProductCard({ product }: { product: Product }) {
             <p className="text-lg font-bold text-gray-900">
               {formatCurrency(product.price)}
             </p>
-            <p className="text-xs text-gray-500">Stock: {product.stock}</p>
+            <p className="text-xs text-gray-500">Stok: {product.stock}</p>
           </div>
           {product.sold && (
             <div className="text-right">
@@ -535,7 +535,7 @@ function ProductListItem({ product }: { product: Product }) {
                 className="px-4 py-2 border-2 border-gray-200 cursor-pointer hover:bg-gray-50 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors"
               >
                 <Eye className="w-4 h-4" />
-                View
+                Lihat
               </button>
               <button
                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
@@ -547,7 +547,7 @@ function ProductListItem({ product }: { product: Product }) {
                 className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 cursor-pointer text-white rounded-lg flex items-center gap-2 text-sm font-medium transition-colors"
               >
                 <ShoppingCart className="w-4 h-4" />
-                {adding === product.id ? "Adding..." : "Add to Cart"}
+                {adding === product.id ? "Menambahkan..." : "Tambah ke Keranjang"}
               </button>
             </div>
           </div>

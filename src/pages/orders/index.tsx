@@ -28,6 +28,21 @@ type OrderShipping = {
   shipping_cost: number;
 };
 
+type PaymentCard = {
+  last4: string;
+  payment_number: string;
+  cardholder_name: string;
+  expiry_month: number;
+  expiry_year: number;
+};
+
+type OrderPayment = {
+  payment_method: string;
+  status: string;
+  paid_at: string;
+  payment_cards: PaymentCard | null;
+};
+
 type Order = {
   id: string;
   status: string;
@@ -35,10 +50,18 @@ type Order = {
   shipping_cost: number;
   tax: number;
   total: number;
-  payment: string; // JSON string
   created_at: string;
   order_items: OrderItem[];
   order_shipping: OrderShipping | null; // ← Bukan array, tapi object
+  order_payments: OrderPayment | null; // JSON string
+};
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
 };
 
 export default function OrdersPage() {
@@ -153,8 +176,8 @@ export default function OrdersPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8 mt-16">
-          <h1 className="text-3xl font-bold text-gray-900">My Orders</h1>
-          <p className="mt-2 text-gray-600">Track and manage your orders</p>
+          <h1 className="text-3xl font-bold text-gray-900">Pesanan Saya</h1>
+          <p className="mt-2 text-gray-600">Lacak dan kelola pesanan Anda</p>
         </div>
 
         {orders.length === 0 ? (
@@ -175,23 +198,24 @@ export default function OrdersPage() {
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No orders yet
+              Belum ada pesanan
             </h3>
             <p className="text-gray-600 mb-6">
-              Start shopping to see your orders here
+              Mulai belanja dan buat pesanan pertama Anda!
             </p>
             <button
               onClick={() => router.push("/products")}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              className="px-6 py-3 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 transition"
             >
-              Browse Products
+              Jelajahi Produk
             </button>
           </div>
         ) : (
           <div className="space-y-6">
             {orders.map((order) => {
               const shipping = order.order_shipping; // ← Langsung ambil object
-              const payment = parsePayment(order.payment);
+              const payment = order.order_payments;
+              const card = payment?.payment_cards;
 
               return (
                 <div
@@ -204,7 +228,7 @@ export default function OrdersPage() {
                       <div>
                         <div className="flex items-center gap-3">
                           <h3 className="text-lg font-semibold text-gray-900">
-                            Order #{order.id.slice(0, 8).toUpperCase()}
+                            Pesanan #{order.id.slice(0, 8).toUpperCase()}
                           </h3>
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
@@ -215,7 +239,7 @@ export default function OrdersPage() {
                           </span>
                         </div>
                         <p className="text-sm text-gray-500 mt-1">
-                          Placed on{" "}
+                          Dibuat pada{" "}
                           {new Date(order.created_at).toLocaleDateString(
                             "en-US",
                             {
@@ -228,7 +252,7 @@ export default function OrdersPage() {
                       </div>
                       <div className="text-right">
                         <p className="text-2xl font-bold text-gray-900">
-                          ${order.total.toFixed(2)}
+                          {formatCurrency(order.total)}
                         </p>
                         <p className="text-sm text-gray-500">
                           {order.order_items?.length || 0} item(s)
@@ -275,13 +299,15 @@ export default function OrdersPage() {
                               {item.products?.name || "Product"}
                             </h5>
                             <p className="text-sm text-gray-500">
-                              Qty: {item.quantity} × $
-                              {item.price_at_time.toFixed(2)}
+                              Qty: {item.quantity} ×
+                              {formatCurrency(item.price_at_time)}
                             </p>
                           </div>
                           <div className="text-right">
                             <p className="font-semibold text-gray-900">
-                              ${(item.quantity * item.price_at_time).toFixed(2)}
+                              {formatCurrency(
+                                item.quantity * item.price_at_time
+                              )}
                             </p>
                           </div>
                         </div>
@@ -314,7 +340,7 @@ export default function OrdersPage() {
                               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                             />
                           </svg>
-                          Shipping Address
+                          Alamat Pengiriman
                         </h4>
                         <div className="text-sm text-gray-600 space-y-1">
                           <p className="font-medium text-gray-900">
@@ -334,7 +360,7 @@ export default function OrdersPage() {
                         <div className="mt-3 pt-3 border-t border-gray-200">
                           <p className="text-sm text-gray-600">
                             <span className="font-medium">
-                              Shipping Method:
+                              Metode Pengiriman:
                             </span>{" "}
                             {shipping.shipping_method}
                           </p>
@@ -358,41 +384,46 @@ export default function OrdersPage() {
                             d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
                           />
                         </svg>
-                        Payment & Summary
+                        Pembayaran & Ringkasan
                       </h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Payment Method:</span>
+                          <span className="text-gray-600">
+                            Metode Pembayaran:
+                          </span>
                           <span className="font-medium text-gray-900">
-                            {payment.method?.toUpperCase() || "N/A"}
-                            {payment.last4 && ` ****${payment.last4}`}
+                            {payment
+                              ? `${payment.payment_method.toUpperCase()}${
+                                  card?.last4 ? ` ****${card.last4}` : ""
+                                }`
+                              : "N/A"}
                           </span>
                         </div>
                         <div className="pt-3 border-t border-gray-200 space-y-2">
                           <div className="flex justify-between">
                             <span className="text-gray-600">Subtotal:</span>
                             <span className="text-gray-900">
-                              ${order.subtotal.toFixed(2)}
+                              {formatCurrency(order.subtotal)}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Shipping:</span>
+                            <span className="text-gray-600">Pengiriman:</span>
                             <span className="text-gray-900">
                               {order.shipping_cost === 0
                                 ? "FREE"
-                                : `$${order.shipping_cost.toFixed(2)}`}
+                                : `${formatCurrency(order.shipping_cost)}`}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Tax:</span>
+                            <span className="text-gray-600">Pajak:</span>
                             <span className="text-gray-900">
-                              ${order.tax.toFixed(2)}
+                              {formatCurrency(order.tax)}
                             </span>
                           </div>
                           <div className="flex justify-between pt-2 border-t border-gray-200 font-semibold text-base">
                             <span className="text-gray-900">Total:</span>
                             <span className="text-gray-900">
-                              ${order.total.toFixed(2)}
+                              {formatCurrency(order.total)}
                             </span>
                           </div>
                         </div>
@@ -406,11 +437,11 @@ export default function OrdersPage() {
                       onClick={() => router.push(`/orders/${order.id}`)}
                       className="px-4 py-2 text-sm cursor-pointer font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
                     >
-                      View Details
+                      Lihat Detail
                     </button>
                     {order.status === "PAID" && (
-                      <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
-                        Track Order
+                      <button className="px-4 py-2 text-sm cursor-not-allowed font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
+                        Lacak Pesanan
                       </button>
                     )}
                   </div>

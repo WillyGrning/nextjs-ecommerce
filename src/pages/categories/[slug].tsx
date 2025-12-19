@@ -179,11 +179,11 @@ export default function CategoryPage() {
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm mb-6 text-blue-100">
             <Link href="/" className="hover:text-white">
-              Home
+              Beranda
             </Link>
             <span>/</span>
             <Link href="/categories" className="hover:text-white">
-              Categories
+              Kategori
             </Link>
             <span>/</span>
             <span className="text-white">{category.name}</span>
@@ -199,7 +199,7 @@ export default function CategoryPage() {
                 <p className="text-blue-100 text-lg">{category.description}</p>
               )}
               <p className="text-blue-100 mt-2">
-                {filteredProducts.length} products available
+                {filteredProducts.length} produk ditemukan
               </p>
             </div>
           </div>

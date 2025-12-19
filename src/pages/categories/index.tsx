@@ -76,16 +76,16 @@ export default function CategoriesPage() {
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm mb-6 text-blue-100">
             <Link href="/" className="hover:text-white">
-              Home
+              Beranda
             </Link>
             <span>/</span>
-            <span className="text-white">Categories</span>
+            <span className="text-white">Kategori</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Browse by Category
+            Jelajahi Kategori Produk
           </h1>
           <p className="text-xl text-blue-100">
-            Discover products organized by your favorite categories
+            Temukan produk yang disusun berdasarkan kategori favorit Anda
           </p>
         </div>
       </div>

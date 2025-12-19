@@ -119,7 +119,7 @@ export default function ForgotPassword({ handleSubmit, loading = false }: Forgot
                                     <button 
                                         onClick={onSubmit}
                                         disabled={loading}
-                                        className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3.5 md:py-4 text-base md:text-lg rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+                                        className="w-full bg-gradient-to-r cursor-pointer from-cyan-500 to-blue-600 text-white py-3.5 md:py-4 text-base md:text-lg rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
                                     >
                                         <span className="relative z-10">{loading ? "Sending..." : "Send Reset Link"}</span>
                                         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

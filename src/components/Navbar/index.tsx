@@ -108,9 +108,7 @@ export default function Navbar({ href }: { href?: string }) {
       setLoading(true);
       try {
         const response = await fetch(
-          `/api/admin/products?search=${encodeURIComponent(
-            searchInput
-          )}&limit=5`
+          `/api/products/search?search=${encodeURIComponent(searchInput)}`
         );
         const data = await response.json();
 
@@ -206,7 +204,7 @@ export default function Navbar({ href }: { href?: string }) {
       setCartCount((prev) => Math.max(prev - 1, 0));
 
       if (item) {
-        setNotification(`${item.products?.name} removed from favorite`);
+        setNotification(`${item.products?.name} dihapus dari favorit`);
         setTimeout(() => setNotification(null), 3000);
       }
     } catch (error) {
@@ -231,7 +229,7 @@ export default function Navbar({ href }: { href?: string }) {
       if (!res.ok) {
         toast.error(data.error || "Failed to add to cart");
       } else {
-        toast.success("Added to cart!");
+        toast.success("Ditambahkan ke keranjang!");
       }
     } catch (error) {
       console.error(error);
@@ -266,7 +264,7 @@ export default function Navbar({ href }: { href?: string }) {
       setCartCount((prev) => Math.max(prev - 1, 0));
 
       if (item) {
-        setNotification(`${item.products?.name} removed from cart`);
+        setNotification(`${item.products?.name} dihapus dari keranjang`);
         setTimeout(() => setNotification(null), 3000);
       }
     } catch (error) {
@@ -386,16 +384,13 @@ export default function Navbar({ href }: { href?: string }) {
   const shipping = subtotal > 500 ? 0 : 15;
   const total = subtotal + shipping;
 
-  const favTotal = favItem
-    .reduce((sum, item) => {
-      const price = item.products?.price ?? 0;
-      const discount = item.products?.discount ?? 0;
-      const finalPrice =
-        discount > 0 ? price - (price * discount) / 100 : price;
+  const favTotal = favItem.reduce((sum, item) => {
+    const price = item.products?.price ?? 0;
+    const discount = item.products?.discount ?? 0;
+    const finalPrice = discount > 0 ? price - (price * discount) / 100 : price;
 
-      return sum + finalPrice;
-    }, 0)
-    .toFixed(2);
+    return sum + finalPrice;
+  }, 0);
 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
@@ -410,28 +405,28 @@ export default function Navbar({ href }: { href?: string }) {
                 href={finalPathname ? "#" : "/"}
                 className="text-gray-700 hover:text-blue-600 transition relative group"
               >
-                Home
+                Beranda
                 <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
               </Link>
               <Link
                 href={finalPathname ? "#" : "/products"}
                 className="text-gray-700 hover:text-blue-600 transition relative group"
               >
-                Products
+                Produk
                 <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
               </Link>
               <Link
                 href={finalPathname ? "#" : "/categories"}
                 className="text-gray-700 hover:text-blue-600 transition relative group"
               >
-                Categories
+                Kategori
                 <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
               </Link>
               <a
                 href="#"
                 className="text-gray-700 hover:text-blue-600 transition relative group"
               >
-                Deals
+                Penawaran
                 <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
               </a>
             </div>
@@ -447,7 +442,7 @@ export default function Navbar({ href }: { href?: string }) {
               <input
                 ref={inputRef}
                 type="text"
-                placeholder="Search products..."
+                placeholder="Cari produk..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onFocus={() => setSearchOpen(true)}
@@ -479,7 +474,7 @@ export default function Navbar({ href }: { href?: string }) {
                       <div className="p-4 border-b border-gray-100">
                         <div className="flex items-center justify-between mb-3">
                           <h3 className="text-xs font-semibold text-gray-500 uppercase">
-                            Recent
+                            Pencarian Terakhir
                           </h3>
                         </div>
                         <div className="space-y-1">
@@ -654,11 +649,9 @@ export default function Navbar({ href }: { href?: string }) {
                       <Settings className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
                       <div className="flex-1 text-left">
                         <p className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
-                          Settings
+                          Pengaturan
                         </p>
-                        <p className="text-xs text-gray-500">
-                          Account preferences
-                        </p>
+                        <p className="text-xs text-gray-500">Preferensi akun</p>
                       </div>
                     </button>
 
@@ -673,10 +666,10 @@ export default function Navbar({ href }: { href?: string }) {
                       <ShoppingBag className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
                       <div className="flex-1 text-left">
                         <p className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
-                          My Orders
+                          Pesanan Saya
                         </p>
                         <p className="text-xs text-gray-500">
-                          Track your purchases
+                          Lihat riwayat pesanan
                         </p>
                       </div>
                     </button>
@@ -691,7 +684,7 @@ export default function Navbar({ href }: { href?: string }) {
                     >
                       <LogOut className="w-5 h-5 text-gray-600 group-hover:text-red-600 transition-colors" />
                       <span className="font-medium text-gray-900 group-hover:text-red-600 transition-colors">
-                        {session ? "Logout" : "Login"}
+                        {session ? "Keluar" : "Masuk"}
                       </span>
                     </button>
                   </div>
@@ -729,7 +722,7 @@ export default function Navbar({ href }: { href?: string }) {
                       <div className="flex items-center gap-2">
                         <Heart className="w-5 h-5 text-red-500 fill-red-500" />
                         <h3 className="font-bold text-gray-900 text-lg">
-                          My Favorites
+                          Wishlist Saya
                         </h3>
                       </div>
                       <span className="text-sm text-gray-500 bg-white px-3 py-1 rounded-full font-semibold shadow-sm">
@@ -738,7 +731,7 @@ export default function Navbar({ href }: { href?: string }) {
                       </span>
                     </div>
                     <p className="text-xs text-gray-600 mt-2">
-                      Your wishlist items
+                      Item yang Anda sukai dan simpan untuk nanti
                     </p>
                   </div>
 
@@ -815,18 +808,21 @@ export default function Navbar({ href }: { href?: string }) {
                               <div className="mt-auto flex items-end justify-between">
                                 <div className="flex flex-col">
                                   <span className="font-bold text-gray-900 text-lg">
-                                    $
-                                    {(item.products?.discount ?? 0) > 0
-                                      ? (item.products?.price ?? 0) -
-                                        ((item.products?.price ?? 0) *
-                                          (item.products?.discount ?? 0)) /
-                                          100
-                                      : item.products?.price}
+                                    {formatCurrency(
+                                      (item.products?.discount ?? 0) > 0
+                                        ? (item.products?.price ?? 0) -
+                                            ((item.products?.price ?? 0) *
+                                              (item.products?.discount ?? 0)) /
+                                              100
+                                        : item.products?.price ?? 0
+                                    )}
                                   </span>
                                   {/* {item.originalPrice > item.price && ( */}
                                   <span className="text-xs text-gray-400 line-through">
-                                    {item.products?.discount ?? 0 > 0
-                                      ? `$ ${item.products?.price}`
+                                    {(item.products?.discount ?? 0) > 0
+                                      ? formatCurrency(
+                                          item.products?.price ?? 0
+                                        )
                                       : ""}
                                   </span>
                                   {/* )} */}
@@ -868,10 +864,10 @@ export default function Navbar({ href }: { href?: string }) {
                       <div className="py-16 text-center">
                         <Heart className="w-20 h-20 text-gray-200 mx-auto mb-4" />
                         <p className="text-gray-500 font-medium text-lg mb-1">
-                          No favorites yet
+                          Belum ada item wishlist
                         </p>
                         <p className="text-gray-400 text-sm">
-                          Start adding items you love!
+                          Telusuri produk dan tambahkan ke wishlist Anda
                         </p>
                       </div>
                     )}
@@ -885,7 +881,7 @@ export default function Navbar({ href }: { href?: string }) {
                         <div className="flex justify-between text-sm bg-white rounded-lg p-3 border border-gray-100">
                           <div className="text-center flex-1 border-r border-gray-100">
                             <p className="text-gray-500 text-xs mb-1">
-                              Total Items
+                              Total Item
                             </p>
                             <p className="font-bold text-gray-900">
                               {favItem.length}
@@ -904,10 +900,10 @@ export default function Navbar({ href }: { href?: string }) {
                           </div>
                           <div className="text-center flex-1">
                             <p className="text-gray-500 text-xs mb-1">
-                              Total Value
+                              Total Harga
                             </p>
                             <p className="font-bold text-blue-600">
-                              ${favTotal}
+                              {formatCurrency(favTotal)}
                             </p>
                           </div>
                         </div>
@@ -915,21 +911,20 @@ export default function Navbar({ href }: { href?: string }) {
                         {/* Actions Buttons */}
                         <div className="grid grid-cols-2 gap-2">
                           <button className="bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-semibold py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-sm">
-                            <ShoppingCart className="w-4 h-4" />
-                            Add All to Cart
+                            Tambah semua ke keranjang
                           </button>
                           <button
                             // onClick={() => router.push("/carts")}
                             className="bg-white hover:bg-gray-50 text-gray-700 font-semibold py-2.5 rounded-xl border-2 border-gray-200 transition-all text-sm cursor-pointer"
                           >
-                            View All
+                            Tampilkan semua wishlist
                           </button>
                         </div>
 
                         {/* Clear All Button */}
                         <button className="w-full text-red-600 hover:text-red-700 font-medium text-sm py-2 flex items-center justify-center gap-2 hover:bg-red-50 rounded-lg transition-colors">
                           <Trash2 className="w-4 h-4" />
-                          Clear All Favorites
+                          Hapus semua
                         </button>
                       </div>
                     </div>
@@ -966,7 +961,7 @@ export default function Navbar({ href }: { href?: string }) {
                   <div className="px-5 py-4 bg-gradient-to-br from-gray-50 to-white border-b border-gray-100">
                     <div className="flex items-center justify-between">
                       <h3 className="font-bold text-gray-900 text-lg">
-                        Shopping Cart
+                        Keranjang Saya
                       </h3>
                       <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full font-semibold">
                         {session ? cartCount + " Items" : 0 + " Item"}
@@ -1021,7 +1016,7 @@ export default function Navbar({ href }: { href?: string }) {
 
                               <div className="flex items-center justify-between">
                                 <span className="font-bold text-gray-900">
-                                  ${(item.products?.price ?? 0).toFixed(2)}
+                                  {formatCurrency(item.products?.price ?? 0)}
                                 </span>
 
                                 {/* Quantity Controls */}
@@ -1051,7 +1046,10 @@ export default function Navbar({ href }: { href?: string }) {
                       <div className="py-12 text-center">
                         <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-3" />
                         <p className="text-gray-500 font-medium">
-                          Your cart is empty
+                          Keranjang Anda kosong
+                        </p>
+                        <p className="text-gray-400 text-sm">
+                          Telusuri produk dan tambahkan ke keranjang Anda
                         </p>
                       </div>
                     )}
@@ -1065,23 +1063,23 @@ export default function Navbar({ href }: { href?: string }) {
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Subtotal</span>
                           <span className="font-semibold text-gray-900">
-                            ${subtotal.toFixed(2)}
+                            {formatCurrency(subtotal)}
                           </span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">Shipping</span>
+                          <span className="text-gray-600">Pengiriman</span>
                           <span className="font-semibold text-gray-900">
                             {shipping === 0 ? (
                               <span className="text-green-600">FREE</span>
                             ) : (
-                              `$${shipping.toFixed(2)}`
+                              `${formatCurrency(shipping)}`
                             )}
                           </span>
                         </div>
                         <div className="pt-2 border-t border-gray-200 flex justify-between">
                           <span className="font-bold text-gray-900">Total</span>
                           <span className="font-bold text-xl text-blue-600">
-                            ${total.toFixed(2)}
+                            {formatCurrency(total)}
                           </span>
                         </div>
                       </div>
@@ -1096,7 +1094,7 @@ export default function Navbar({ href }: { href?: string }) {
                           onClick={() => router.push("/carts")}
                           className="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl border-2 border-gray-200 transition-all cursor-pointer"
                         >
-                          View Cart
+                          Lihat Keranjang Saya
                         </button>
                       </div>
 

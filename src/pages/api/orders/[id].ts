@@ -24,7 +24,8 @@ export default async function handler(
     // Fetch single order with related data
     const { data: order, error: orderError } = await supabase
       .from("orders")
-      .select(`
+      .select(
+        `
         *,
         order_items!order_items_order_id_fkey (
           id,
@@ -48,19 +49,35 @@ export default async function handler(
           country,
           shipping_method,
           shipping_cost
+        ),
+        order_payments!order_payments_order_id_fkey (
+          id,
+          payment_method,
+          payment_provider,
+          transaction_id,
+          status,
+          paid_at,
+          payment_cards!order_payments_payment_card_id_fkey (
+            last4,
+            payment_number,
+            cardholder_name,
+            expiry_month,
+            expiry_year
+          )
         )
-      `)
+      `
+      )
       .eq("id", id)
       .eq("user_id", user_id)
       .single();
 
     if (orderError) {
       console.error("Supabase error:", orderError);
-      
+
       if (orderError.code === "PGRST116") {
         return res.status(404).json({ message: "Order not found" });
       }
-      
+
       throw orderError;
     }
 

@@ -207,6 +207,7 @@ export type Database = {
           id: string
           order_id: string
           paid_at: string | null
+          payment_card_id: string | null
           payment_method: string
           payment_provider: string | null
           status: string
@@ -216,6 +217,7 @@ export type Database = {
           id?: string
           order_id: string
           paid_at?: string | null
+          payment_card_id?: string | null
           payment_method: string
           payment_provider?: string | null
           status?: string
@@ -225,6 +227,7 @@ export type Database = {
           id?: string
           order_id?: string
           paid_at?: string | null
+          payment_card_id?: string | null
           payment_method?: string
           payment_provider?: string | null
           status?: string
@@ -236,6 +239,13 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: true
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_payments_payment_card_id_fkey"
+            columns: ["payment_card_id"]
+            isOneToOne: false
+            referencedRelation: "payment_cards"
             referencedColumns: ["id"]
           },
         ]
@@ -350,6 +360,7 @@ export type Database = {
           id: string
           is_default: boolean | null
           last4: string
+          payment_number: string | null
           user_id: string | null
         }
         Insert: {
@@ -361,6 +372,7 @@ export type Database = {
           id?: string
           is_default?: boolean | null
           last4: string
+          payment_number?: string | null
           user_id?: string | null
         }
         Update: {
@@ -372,6 +384,7 @@ export type Database = {
           id?: string
           is_default?: boolean | null
           last4?: string
+          payment_number?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -442,6 +455,89 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      promo_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          description: string | null
+          discount_type: string
+          discount_value: number
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          max_discount: number | null
+          min_order_amount: number | null
+          start_at: string | null
+          updated_at: string | null
+          usage_limit: number | null
+          used_count: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          description?: string | null
+          discount_type: string
+          discount_value: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_discount?: number | null
+          min_order_amount?: number | null
+          start_at?: string | null
+          updated_at?: string | null
+          usage_limit?: number | null
+          used_count?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_discount?: number | null
+          min_order_amount?: number | null
+          start_at?: string | null
+          updated_at?: string | null
+          usage_limit?: number | null
+          used_count?: number | null
+        }
+        Relationships: []
+      }
+      promo_redemptions: {
+        Row: {
+          id: string
+          order_id: string | null
+          promo_id: string | null
+          redeemed_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          order_id?: string | null
+          promo_id?: string | null
+          redeemed_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          order_id?: string | null
+          promo_id?: string | null
+          redeemed_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promo_redemptions_promo_id_fkey"
+            columns: ["promo_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
             referencedColumns: ["id"]
           },
         ]

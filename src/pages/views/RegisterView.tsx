@@ -296,7 +296,7 @@ export default function RegisterView({
                     <button
                       type="submit" // ✅ submit the form properly
                       disabled={loading}
-                      className="w-full bg-gradient-to-r from-rose-500 to-orange-500 text-white py-3.5 md:py-4 text-base md:text-lg rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group mt-2"
+                      className="w-full bg-gradient-to-r cursor-pointer from-rose-500 to-orange-500 text-white py-3.5 md:py-4 text-base md:text-lg rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group mt-2"
                     >
                       {loading ? "Creating Account..." : "Create Account"}
                     </button>

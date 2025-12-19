@@ -30,3 +30,18 @@ export interface OrderItem {
   quantity: number;
   price_at_time: number;
 }
+
+type PaymentCard = {
+  last4: string;
+  payment_number: string;
+  cardholder_name: string;
+  expiry_month: number;
+  expiry_year: number;
+};
+
+export type OrderPayment = {
+  payment_method: string;
+  status: string;
+  paid_at: string;
+  payment_cards: PaymentCard | null;
+};
