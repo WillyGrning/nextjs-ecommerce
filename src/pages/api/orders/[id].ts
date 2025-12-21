@@ -64,6 +64,11 @@ export default async function handler(
             expiry_month,
             expiry_year
           )
+        ),
+        product_reviews!product_reviews_order_id_fkey (
+          id,
+          user_id,
+          product_id
         )
       `
       )

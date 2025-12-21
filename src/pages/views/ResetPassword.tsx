@@ -83,19 +83,19 @@ export default function ResetPassword({
                             <AlertCircle className="w-12 h-12 md:w-14 md:h-14 text-red-500" />
                         </div>
                         
-                        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">Invalid or Expired Link</h2>
-                        <p className="text-gray-600 mb-6">This password reset link is no longer valid. It may have expired or already been used.</p>
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">Link Tidak Valid atau Kadaluarsa</h2>
+                        <p className="text-gray-600 mb-6">Link reset password ini tidak lagi valid. Mungkin sudah kadaluarsa atau sudah digunakan.</p>
                         
                         <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-6 text-left">
-                            <p className="text-sm text-red-800 font-medium mb-2">What can you do?</p>
+                            <p className="text-sm text-red-800 font-medium mb-2">Apa yang bisa Anda lakukan?</p>
                             <ul className="text-sm text-red-700 space-y-1.5">
                                 <li className="flex items-start gap-2">
                                     <span className="text-red-500 mt-0.5">•</span>
-                                    <span>Request a new password reset link</span>
+                                    <span>Kirimkan permintaan link reset password baru</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span className="text-red-500 mt-0.5">•</span>
-                                    <span>Password reset links expire after 24 hours</span>
+                                    <span>Link reset password kadaluarsa setelah 24 jam</span>
                                 </li>
                             </ul>
                         </div>
@@ -104,14 +104,14 @@ export default function ResetPassword({
                             href="/auth/forgotPassword"
                             className="inline-block w-full bg-gradient-to-r from-red-500 to-pink-500 text-white py-3.5 rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                         >
-                            Request New Link
+                            Minta Link Reset Baru
                         </Link>
 
                         <Link 
                             href="/auth/login"
                             className="block text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors mt-4"
                         >
-                            Back to Login
+                            Kembali ke Login
                         </Link>
                     </div>
                 </div>
@@ -134,23 +134,23 @@ export default function ResetPassword({
                             <CheckCircle2 className="w-12 h-12 md:w-14 md:h-14 text-white" />
                         </div>
                         
-                        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">Password Reset Successfully!</h2>
-                        <p className="text-gray-600 mb-6">Your password has been reset. You can now login with your new password.</p>
-                        
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">Password Berhasil Direset!</h2>
+                        <p className="text-gray-600 mb-6">Password Anda telah direset. Anda sekarang dapat login dengan password baru.</p>
+
                         <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg mb-6 text-left">
                             <p className="text-sm text-green-800 font-medium mb-2">✓ All set!</p>
                             <ul className="text-sm text-green-700 space-y-1.5">
                                 <li className="flex items-start gap-2">
                                     <span className="text-green-500 mt-0.5">•</span>
-                                    <span>Your password has been updated</span>
+                                    <span>Password Anda telah diperbarui</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span className="text-green-500 mt-0.5">•</span>
-                                    <span>Use your new password to login</span>
+                                    <span>Gunakan password baru untuk login</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span className="text-green-500 mt-0.5">•</span>
-                                    <span>Keep your password secure</span>
+                                    <span>Simpan password Anda dengan aman</span>
                                 </li>
                             </ul>
                         </div>
@@ -159,7 +159,7 @@ export default function ResetPassword({
                             href="/auth/login"
                             className="inline-block w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3.5 rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                         >
-                            Go to Login
+                            Kembali ke Login
                         </Link>
                     </div>
                 </div>
@@ -190,7 +190,7 @@ export default function ResetPassword({
                             <KeyRound className="w-10 h-10 md:w-12 md:h-12 text-white" />
                         </div>
                         <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Reset Password</h1>
-                        <p className="text-purple-100 text-sm md:text-base">Create a new secure password</p>
+                        <p className="text-purple-100 text-sm md:text-base">Buat password baru yang aman</p>
                     </div>
 
                     {/* Form section */}
@@ -200,8 +200,8 @@ export default function ResetPassword({
                             <div className="flex gap-3">
                                 <Lock className="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" />
                                 <div>
-                                    <p className="text-sm text-purple-800 font-medium mb-1">Choose a strong password</p>
-                                    <p className="text-xs text-purple-700">Use at least 8 characters with a mix of letters and numbers</p>
+                                    <p className="text-sm text-purple-800 font-medium mb-1">Pilih password yang kuat</p>
+                                    <p className="text-xs text-purple-700">Gunakan minimal 8 karakter dengan kombinasi huruf dan angka</p>
                                 </div>
                             </div>
                         </div>
@@ -211,7 +211,7 @@ export default function ResetPassword({
                             <div className="space-y-2">
                                 <label className="text-sm md:text-base font-semibold text-gray-700 flex items-center gap-2">
                                     <Lock className="w-4 h-4 text-purple-600" />
-                                    New Password
+                                    Password Baru
                                 </label>
                                 <div className="relative group">
                                     <input 
@@ -233,7 +233,7 @@ export default function ResetPassword({
                                         onClick={() => setShowNewPassword(!showNewPassword)}
                                         className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                                     >
-                                        {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                        {showNewPassword ? <EyeOff className="w-5 h-5 cursor-pointer" /> : <Eye className="w-5 h-5 cursor-pointer" />}
                                     </button>
                                     <div className="absolute inset-0 -z-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl opacity-0 group-focus-within:opacity-20 blur transition-opacity duration-300"></div>
                                 </div>
@@ -242,7 +242,7 @@ export default function ResetPassword({
                                         <span>⚠️</span> {errors.newPassword}
                                     </p>
                                 ) : (
-                                    <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters long</p>
+                                    <p className="text-xs text-gray-500 mt-1">Minimal 8 karakter</p>
                                 )}
                             </div>
 
@@ -250,7 +250,7 @@ export default function ResetPassword({
                             <div className="space-y-2">
                                 <label className="text-sm md:text-base font-semibold text-gray-700 flex items-center gap-2">
                                     <Lock className="w-4 h-4 text-purple-600" />
-                                    Confirm Password
+                                    Konfirmasi Password
                                 </label>
                                 <div className="relative group">
                                     <input 
@@ -272,7 +272,7 @@ export default function ResetPassword({
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                         className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                                     >
-                                        {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                        {showConfirmPassword ? <EyeOff className="w-5 h-5 cursor-pointer" /> : <Eye className="w-5 h-5 cursor-pointer" />}
                                     </button>
                                     <div className="absolute inset-0 -z-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl opacity-0 group-focus-within:opacity-20 blur transition-opacity duration-300"></div>
                                 </div>
@@ -298,7 +298,7 @@ export default function ResetPassword({
                                 href="/auth/login"
                                 className="block text-center text-sm md:text-base text-gray-600 hover:text-gray-900 font-medium transition-colors"
                             >
-                                Back to Login
+                                Kembali ke Login
                             </Link>
                         </div>
                     </div>

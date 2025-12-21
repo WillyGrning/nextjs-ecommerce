@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { User, Mail, Lock, Bell, Shield, CreditCard, MapPin, Phone, Camera, Save, X, Check, Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
 import BillingTab from './BillingTab';
+import toast from 'react-hot-toast';
 
 export default function UserSetting() {
   const [activeTab, setActiveTab] = useState('profile');
@@ -118,9 +119,9 @@ export default function UserSetting() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error || "Update failed");
+        toast.error(data.error || "Gagal menyimpan perubahan");
       } else {
-        alert("Changes saved successfully!");
+        toast.success("Perubahan disimpan!");
       }
     } catch (err) {
       console.error(err);

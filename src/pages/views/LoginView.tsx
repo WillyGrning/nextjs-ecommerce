@@ -119,10 +119,10 @@ export default function LoginView({ handleSubmit, loading }: LoginViewProps) {
                   <Lock className="w-10 h-10 md:w-12 md:h-12 text-white" />
                 </div>
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                  Welcome Back
+                  Selamat Datang
                 </h1>
                 <p className="text-indigo-100 text-sm md:text-base">
-                  Sign in to continue your journey
+                  Silakan masuk ke akun Anda untuk melanjutkan
                 </p>
               </div>
 
@@ -133,7 +133,7 @@ export default function LoginView({ handleSubmit, loading }: LoginViewProps) {
                   <div className="space-y-2">
                     <label className="text-sm md:text-base font-semibold text-gray-700 flex items-center gap-2">
                       <Mail className="w-4 h-4 text-indigo-600" />
-                      Email Address
+                      Email
                     </label>
                     <div className="relative group">
                       <input
@@ -154,7 +154,7 @@ export default function LoginView({ handleSubmit, loading }: LoginViewProps) {
                             ? "focus:border-red-500"
                             : "focus:border-rose-500"
                         } focus:bg-white transition-all duration-300 placeholder:text-gray-400`}
-                        placeholder="your.email@example.com"
+                        placeholder="Email"
                         required
                       />
                       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl opacity-0 group-focus-within:opacity-20 blur transition-opacity duration-300"></div>
@@ -191,7 +191,7 @@ export default function LoginView({ handleSubmit, loading }: LoginViewProps) {
                             ? "focus:border-red-500"
                             : "focus:border-rose-500"
                         } focus:bg-white transition-all duration-300 placeholder:text-gray-400 pr-12`}
-                        placeholder="Enter your password"
+                        placeholder="Password"
                         required
                       />
                       <button
@@ -213,7 +213,7 @@ export default function LoginView({ handleSubmit, loading }: LoginViewProps) {
                       </p>
                     ) : (
                       <p className="text-xs text-gray-500 mt-1">
-                        Must be at least 8 characters long
+                        Minimal 8 karakter
                       </p>
                     )}
                   </div>
@@ -224,7 +224,7 @@ export default function LoginView({ handleSubmit, loading }: LoginViewProps) {
                       href="./forgotPassword"
                       className="text-sm md:text-base font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
                     >
-                      Forgot password?
+                      Lupa password?
                     </a>
                   </div>
 
@@ -235,7 +235,7 @@ export default function LoginView({ handleSubmit, loading }: LoginViewProps) {
                     className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3.5 md:py-4 cursor-pointer text-base md:text-lg rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
                   >
                     <span className="relative z-10">
-                      {loading ? "Signing in..." : "Sign In"}
+                      {loading ? "Loading..." : "Login"}
                     </span>
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </button>
@@ -245,7 +245,7 @@ export default function LoginView({ handleSubmit, loading }: LoginViewProps) {
                 <div className="flex items-center gap-4 my-6 md:my-8">
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
                   <span className="text-sm md:text-base text-gray-500 font-medium">
-                    OR
+                    ATAU
                   </span>
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
                 </div>
@@ -278,18 +278,18 @@ export default function LoginView({ handleSubmit, loading }: LoginViewProps) {
                     />
                   </svg>
                   <span className="text-sm md:text-base font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                    Continue with Google
+                    Lanjutkan dengan Google
                   </span>
                 </button>
 
                 {/* Sign up link */}
                 <p className="text-center text-sm md:text-base text-gray-600 mt-6">
-                  Don&apos;t have an account?{" "}
+                  Belum punya akun?{" "}
                   <a
                     href="./register"
                     className="font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
                   >
-                    Create one now
+                    Daftar Sekarang
                   </a>
                 </p>
               </div>

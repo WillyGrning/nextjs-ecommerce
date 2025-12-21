@@ -67,8 +67,8 @@ export default function ForgotPassword({ handleSubmit, loading = false }: Forgot
                                 <div className="w-20 h-20 md:w-24 md:h-24 bg-white/20 backdrop-blur-sm rounded-full mx-auto mb-4 flex items-center justify-center">
                                     <KeyRound className="w-10 h-10 md:w-12 md:h-12 text-white" />
                                 </div>
-                                <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Forgot Password?</h1>
-                                <p className="text-cyan-100 text-sm md:text-base">No worries, we&apos;ll send you reset instructions</p>
+                                <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Lupa Password?</h1>
+                                <p className="text-cyan-100 text-sm md:text-base">Jangan khawatir, kami akan mengirimkan link untuk mereset password</p>
                             </div>
 
                             {/* Form section */}
@@ -78,8 +78,8 @@ export default function ForgotPassword({ handleSubmit, loading = false }: Forgot
                                     <div className="flex gap-3">
                                         <AlertCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                                         <div>
-                                            <p className="text-sm text-blue-800 font-medium mb-1">Enter your email address</p>
-                                            <p className="text-xs text-blue-700">We&apos;ll send you a link to reset your password</p>
+                                            <p className="text-sm text-blue-800 font-medium mb-1">Masukkan alamat email Anda</p>
+                                            <p className="text-xs text-blue-700">Kami akan mengirimkan link untuk mereset password</p>
                                         </div>
                                     </div>
                                 </div>
@@ -89,7 +89,7 @@ export default function ForgotPassword({ handleSubmit, loading = false }: Forgot
                                     <div className="space-y-2">
                                         <label className="text-sm md:text-base font-semibold text-gray-700 flex items-center gap-2">
                                             <Mail className="w-4 h-4 text-cyan-500" />
-                                            Email Address
+                                            Email
                                         </label>
                                         <div className="relative group">
                                             <input 
@@ -104,7 +104,7 @@ export default function ForgotPassword({ handleSubmit, loading = false }: Forgot
                                                     validateEmail();
                                                 }}
                                                 className={`w-full px-4 py-3 md:py-4 text-base bg-gray-50 border-2 ${error ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:outline-none ${error ? 'focus:border-red-500' : 'focus:border-cyan-500'} focus:bg-white transition-all duration-300 placeholder:text-gray-400`}
-                                                placeholder="your.email@example.com"
+                                                placeholder="Email"
                                             />
                                             <div className="absolute inset-0 -z-10 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl opacity-0 group-focus-within:opacity-20 blur transition-opacity duration-300"></div>
                                         </div>
@@ -121,7 +121,7 @@ export default function ForgotPassword({ handleSubmit, loading = false }: Forgot
                                         disabled={loading}
                                         className="w-full bg-gradient-to-r cursor-pointer from-cyan-500 to-blue-600 text-white py-3.5 md:py-4 text-base md:text-lg rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
                                     >
-                                        <span className="relative z-10">{loading ? "Sending..." : "Send Reset Link"}</span>
+                                        <span className="relative z-10">{loading ? "Loading..." : "Kirim Link Reset"}</span>
                                         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                     </button>
 
@@ -131,7 +131,7 @@ export default function ForgotPassword({ handleSubmit, loading = false }: Forgot
                                         className="flex items-center justify-center gap-2 text-sm md:text-base text-gray-600 hover:text-gray-900 font-medium transition-colors group"
                                     >
                                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                                        Back to Login
+                                        Kembali ke Login
                                     </a>
                                 </div>
                             </div>
@@ -144,33 +144,33 @@ export default function ForgotPassword({ handleSubmit, loading = false }: Forgot
                                     <CheckCircle2 className="w-12 h-12 md:w-14 md:h-14 text-white" />
                                 </div>
                                 
-                                <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">Check Your Email!</h2>
-                                <p className="text-gray-600 mb-2">We&apos;ve sent a password reset link to:</p>
+                                <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">Cek Email Anda!</h2>
+                                <p className="text-gray-600 mb-2">Kami telah mengirimkan link reset password ke:</p>
                                 <p className="text-cyan-600 font-semibold mb-6">{email}</p>
                                 
                                 <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
-                                    <p className="text-sm text-gray-700 mb-2 font-medium">📬 What&apos;s next?</p>
+                                    <p className="text-sm text-gray-700 mb-2 font-medium">📬 Apa selanjutnya?</p>
                                     <ul className="text-sm text-gray-600 space-y-1.5">
                                         <li className="flex items-start gap-2">
                                             <span className="text-cyan-500 mt-0.5">•</span>
-                                            <span>Click the link in your email to reset your password</span>
+                                            <span>Klik link di email Anda untuk mereset password</span>
                                         </li>
                                         <li className="flex items-start gap-2">
                                             <span className="text-cyan-500 mt-0.5">•</span>
-                                            <span>The link will expire in 24 hours</span>
+                                            <span>Link akan kedaluwarsa dalam 24 jam</span>
                                         </li>
                                         <li className="flex items-start gap-2">
                                             <span className="text-cyan-500 mt-0.5">•</span>
-                                            <span>Check your spam folder if you don&apos;t see it</span>
+                                            <span>Cek folder spam jika tidak menemukan email</span>
                                         </li>
                                     </ul>
                                 </div>
 
                                 <button 
                                     onClick={() => setSubmitted(false)}
-                                    className="text-sm text-cyan-600 hover:text-cyan-700 font-medium mb-4 hover:underline"
+                                    className="text-sm text-cyan-600 cursor-pointer hover:text-cyan-700 font-medium mb-4 hover:underline"
                                 >
-                                    Didn&apos;t receive the email? Try again
+                                    Tidak menerima email? Kirim ulang
                                 </button>
 
                                 <a 
@@ -178,7 +178,7 @@ export default function ForgotPassword({ handleSubmit, loading = false }: Forgot
                                     className="flex items-center justify-center gap-2 text-sm md:text-base text-gray-600 hover:text-gray-900 font-medium transition-colors group mt-4"
                                 >
                                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                                    Back to Login
+                                    Kembali ke Login
                                 </a>
                             </div>
                         </>

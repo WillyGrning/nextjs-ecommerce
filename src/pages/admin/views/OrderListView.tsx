@@ -17,8 +17,11 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
+  Truck,
 } from "lucide-react";
 import type { Order, OrdersApiResponse } from "@/types/order";
+import toast from "react-hot-toast";
+import { FaRupiahSign } from "react-icons/fa6";
 /* =======================
    Types
 ======================= */
@@ -35,25 +38,25 @@ const fetcher = async (url: string) => {
   return res.json();
 };
 
-// const formatCurrency = (amount: number) => {
-//   return new Intl.NumberFormat("id-ID", {
-//     style: "currency",
-//     currency: "IDR",
-//     minimumFractionDigits: 0,
-//   }).format(amount);
-// };
-
-const formatCurrency = (
-  amount: number,
-  currency: "USD" | "IDR" = "USD",
-  locale: string = "en-US"
-): string => {
-  return new Intl.NumberFormat(locale, {
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
     style: "currency",
-    currency,
+    currency: "IDR",
     minimumFractionDigits: 0,
   }).format(amount);
 };
+
+// const formatCurrency = (
+//   amount: number,
+//   currency: "USD" | "IDR" = "USD",
+//   locale: string = "en-US"
+// ): string => {
+//   return new Intl.NumberFormat(locale, {
+//     style: "currency",
+//     currency,
+//     minimumFractionDigits: 0,
+//   }).format(amount);
+// };
 
 
 const formatDate = (dateString: string) => {
@@ -81,6 +84,11 @@ const STATUS_CONFIG = {
     label: "Shipped",
     color: "bg-purple-100 text-purple-800 border-purple-200",
     icon: Package,
+  },
+  delivered: {
+    label: "Delivered",
+    color: "bg-indigo-100 text-indigo-800 border-indigo-200",
+    icon: Truck,
   },
   completed: {
     label: "Completed",
@@ -155,14 +163,14 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
       const result = await res.json();
 
       if (res.ok) {
-        alert("Order status updated successfully!");
+        toast.success("Status pesanan berhasil diperbarui!");
         setShowModal(false);
         mutate();
       } else {
-        alert(result.message || "Failed to update status");
+        toast.error(result.message || "Gagal memperbarui status pesanan");
       }
     } catch (error) {
-      console.error("Failed to update status:", error);
+      console.error("Gagal memperbarui status pesanan:", error);
       alert("Failed to update order status");
     }
   };
@@ -170,7 +178,7 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
   const handleDeleteOrder = async (orderId: string) => {
     if (
       !window.confirm(
-        "Are you sure you want to delete this order? This action cannot be undone."
+        "Apakah Anda yakin ingin menghapus pesanan ini? Tindakan ini tidak dapat dibatalkan."
       )
     ) {
       return;
@@ -240,9 +248,9 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-800">Order Management</h1>
+        <h1 className="text-3xl font-bold text-slate-800">Manajemen Pesanan</h1>
         <p className="text-slate-600 mt-1">
-          Manage and track all customer orders
+          Kelola dan lacak semua pesanan pelanggan
         </p>
       </div>
 
@@ -251,7 +259,7 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
         <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-600 text-sm mb-1">Total Orders</p>
+              <p className="text-slate-600 text-sm mb-1">Total Pesanan</p>
               <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
             </div>
             <div className="bg-slate-100 p-3 rounded-lg">
@@ -305,13 +313,13 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
         <div className="bg-white rounded-xl p-5 shadow-sm border border-emerald-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-600 text-sm mb-1">Revenue</p>
+              <p className="text-slate-600 text-sm mb-1">Pendapatan</p>
               <p className="text-lg font-bold text-emerald-600">
                 {formatCurrency(stats.revenue)}
               </p>
             </div>
             <div className="bg-emerald-100 p-3 rounded-lg">
-              <DollarSign className="w-6 h-6 text-emerald-600" />
+              <FaRupiahSign className="w-6 h-6 text-emerald-600" />
             </div>
           </div>
         </div>
@@ -324,7 +332,7 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <input
               type="text"
-              placeholder="Search by customer name, email, or order ID..."
+              placeholder="Cari berdasarkan ID Pesanan, Nama, atau Email Pelanggan..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
@@ -345,6 +353,7 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
               <option value="pending">Pending</option>
               <option value="processing">Processing</option>
               <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
             </select>
@@ -369,8 +378,8 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
         ) : orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-slate-500">
             <Package className="w-16 h-16 mb-4 opacity-50" />
-            <p className="text-lg font-medium">No orders found</p>
-            <p className="text-sm">Try adjusting your filters</p>
+            <p className="text-lg font-medium">Pesanan Tidak Ditemukan</p>
+            <p className="text-sm">Coba sesuaikan filter Anda</p>
           </div>
         ) : (
           <>
@@ -546,7 +555,7 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
           <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-slate-200">
               <h2 className="text-2xl font-bold text-slate-800">
-                {modalType === "view" ? "Order Details" : "Edit Order Status"}
+                {modalType === "view" ? "Detail Pesanan" : "Edit Status Pesanan"}
               </h2>
             </div>
 
@@ -555,7 +564,7 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
                 <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-slate-600 mb-1">Order ID</p>
+                      <p className="text-sm text-slate-600 mb-1">ID Pesanan</p>
                       <p className="font-mono font-semibold text-slate-800">
                         #{selectedOrder?.id}
                       </p>
@@ -580,7 +589,7 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
 
                   <div className="border-t border-slate-200 pt-4">
                     <h3 className="font-semibold text-slate-800 mb-3">
-                      Customer Information
+                      Informasi Pelanggan
                     </h3>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
@@ -597,7 +606,7 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
 
                   <div className="border-t border-slate-200 pt-4">
                     <h3 className="font-semibold text-slate-800 mb-3">
-                      Payment Details
+                      Detail Pembayaran
                     </h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
@@ -607,13 +616,13 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600">Shipping Cost</span>
+                        <span className="text-slate-600">Biaya Pengiriman</span>
                         <span className="font-medium text-slate-800">
                           {formatCurrency(selectedOrder?.shipping_cost || 0)}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600">Tax</span>
+                        <span className="text-slate-600">Pajak</span>
                         <span className="font-medium text-slate-800">
                           {formatCurrency(selectedOrder?.tax || 0)}
                         </span>
@@ -641,11 +650,11 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
                     </h3>
                     <div className="space-y-2 text-sm">
                       <p className="text-slate-600">
-                        Created:{" "}
+                        Dibuat:{" "}
                         {formatDate(selectedOrder?.created_at || "N/A")}
                       </p>
                       <p className="text-slate-600">
-                        Last Updated:{" "}
+                        Terakhir Diperbarui:{" "}
                         {formatDate(selectedOrder?.updated_at || "N/A")}
                       </p>
                     </div>
@@ -691,7 +700,7 @@ export default function OrderListView({ initialPage = 1 }: OrderListViewProps) {
                 onClick={() => setShowModal(false)}
                 className="px-6 py-2.5 text-slate-700 bg-slate-100 cursor-pointer hover:bg-slate-200 rounded-lg font-medium transition-colors"
               >
-                Close
+                Tutup
               </button>
             </div>
           </div>

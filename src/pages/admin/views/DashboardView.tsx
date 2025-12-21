@@ -45,14 +45,22 @@ const fetcher = async (url: string) => {
   return res.json();
 };
 
-const formatCurrency = (
-  amount: number,
-  currency: "USD" | "IDR" = "USD",
-  locale: string = "en-US"
-): string => {
-  return new Intl.NumberFormat(locale, {
+// const formatCurrency = (
+//   amount: number,
+//   currency: "USD" | "IDR" = "USD",
+//   locale: string = "en-US"
+// ): string => {
+//   return new Intl.NumberFormat(locale, {
+//     style: "currency",
+//     currency,
+//     minimumFractionDigits: 0,
+//   }).format(amount);
+// };
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
     style: "currency",
-    currency,
+    currency: "IDR",
     minimumFractionDigits: 0,
   }).format(amount);
 };
@@ -135,17 +143,17 @@ export default function DashboardView({ session }: AdminDashboardProps) {
 
   const stats = [
     {
-      title: "Total Revenue",
+      title: "Total Pendapatan",
       value: isOrderLoading
         ? "Loading..."
-        : formatCurrency(revenue || 0, "USD", "en-US"),
+        : formatCurrency(revenue || 0),
       change: "+20.1%",
       trend: "up",
       icon: DollarSign,
       color: "from-green-500 to-emerald-600",
     },
     {
-      title: "Total Users",
+      title: "Total Pengguna",
       value: isUserLoading ? "Loading..." : userTotal,
       change: "+12.5%",
       trend: "up",
@@ -153,7 +161,7 @@ export default function DashboardView({ session }: AdminDashboardProps) {
       color: "from-blue-500 to-indigo-600",
     },
     {
-      title: "Orders",
+      title: "Pesanan",
       value: isOrderLoading ? "Loading..." : orderTotal,
       change: "+8.2%",
       trend: "up",
@@ -161,7 +169,7 @@ export default function DashboardView({ session }: AdminDashboardProps) {
       color: "from-purple-500 to-pink-600",
     },
     {
-      title: "Products",
+      title: "Produk",
       value: isLoading ? "Loading..." : total,
       change: "-2.4%",
       trend: "down",
@@ -231,9 +239,9 @@ export default function DashboardView({ session }: AdminDashboardProps) {
           </div>
           <div className="hidden md:block">
             <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
-              <p className="text-sm text-indigo-100 mb-1">Today&apos;s Date</p>
+              <p className="text-sm text-indigo-100 mb-1">Tanggal Sekarang</p>
               <p className="text-xl font-bold">
-                {new Date().toLocaleDateString("en-US", {
+                {new Date().toLocaleDateString("id-ID", {
                   month: "short",
                   day: "numeric",
                   year: "numeric",
@@ -287,12 +295,12 @@ export default function DashboardView({ session }: AdminDashboardProps) {
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Recent Orders</h2>
+              <h2 className="text-xl font-bold text-gray-900">Pesanan Terbaru</h2>
               <button
                 onClick={() => router.push("/admin/orders")}
                 className="text-sm text-indigo-600 cursor-pointer hover:text-indigo-700 font-semibold"
               >
-                View All
+                Lihat Semua Pesanan
               </button>
             </div>
           </div>
@@ -328,7 +336,7 @@ export default function DashboardView({ session }: AdminDashboardProps) {
                     <p className="text-lg font-bold text-gray-900">
                       {order.total.toLocaleString("en-US", {
                         style: "currency",
-                        currency: "USD",
+                        currency: "IDR",
                       })}
                     </p>
                   </div>
@@ -391,7 +399,7 @@ export default function DashboardView({ session }: AdminDashboardProps) {
           >
             <Package className="w-8 h-8 text-gray-400 group-hover:text-purple-600 transition-colors" />
             <span className="text-sm font-semibold text-gray-600 group-hover:text-purple-600 transition-colors">
-              Add Product
+              Tambah Produk
             </span>
           </button>
           <button className="flex flex-col items-center cursor-pointer gap-2 p-6 rounded-xl border-2 border-dashed border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all group">
@@ -406,7 +414,7 @@ export default function DashboardView({ session }: AdminDashboardProps) {
           >
             <TrendingUp className="w-8 h-8 text-gray-400 group-hover:text-orange-600 transition-colors" />
             <span className="text-sm font-semibold text-gray-600 group-hover:text-orange-600 transition-colors">
-              View Reports
+              Lihat Laporan
             </span>
           </button>
         </div>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { OrderPayment } from "@/types/order";
 import { format } from "path";
+import toast from "react-hot-toast";
 
 type OrderItem = {
   id: string;
@@ -30,6 +31,14 @@ type OrderShipping = {
   shipping_cost: number;
 };
 
+type ProductReview = {
+  id: string;
+  user_id: string;
+  product_id: string;
+  rating?: number;
+  review?: string;
+};
+
 type Order = {
   id: string;
   status: string;
@@ -42,6 +51,7 @@ type Order = {
   order_items: OrderItem[];
   order_shipping: OrderShipping | null;
   order_payments: OrderPayment | null;
+  product_reviews: ProductReview[] | null;
 };
 
 const formatCurrency = (amount: number) => {
@@ -59,6 +69,15 @@ export default function OrderDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [showReview, setShowReview] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(
+    null
+  );
+  const [rating, setRating] = useState<number>(0);
+  const [review, setReview] = useState<string>("");
 
   useEffect(() => {
     if (!id || !session?.user?.id) return;
@@ -137,12 +156,75 @@ export default function OrderDetailPage() {
     alert("Invoice download will be implemented soon!");
   };
 
+  const handleCompleteOrder = async () => {
+    try {
+      setSubmitting(true);
+
+      const res = await fetch("/api/orders/complete", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          order_id: order?.id,
+          user_id: session?.user?.id,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message);
+      }
+
+      setShowConfirm(false);
+
+      // refresh page / refetch orders
+      toast.success("Pesanan berhasil diselesaikan");
+      router.replace(router.asPath);
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal menyelesaikan pesanan");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!selectedOrderId || !selectedProductId) return;
+
+    try {
+      setSubmitting(true);
+
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: session?.user?.id,
+          order_id: selectedOrderId,
+          product_id: selectedProductId,
+          rating,
+          review,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to submit review");
+
+      setShowReview(false);
+      setRating(0);
+      setReview("");
+      toast.success("Ulasan berhasil dikirim");
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal mengirim ulasan");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading order details...</p>
+          <p className="mt-4 text-gray-600">Memnuat detail pesanan...</p>
         </div>
       </div>
     );
@@ -157,7 +239,7 @@ export default function OrderDetailPage() {
           </p>
           <button
             onClick={() => router.push("/orders")}
-            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="mt-4 px-6 py-2 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700"
           >
             Kembali ke Pesanan
           </button>
@@ -197,7 +279,7 @@ export default function OrderDetailPage() {
         <div className="mb-6 mt-16 print:hidden">
           <button
             onClick={() => router.push("/orders")}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+            className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-gray-900 mb-4"
           >
             <svg
               className="w-5 h-5"
@@ -287,15 +369,122 @@ export default function OrderDetailPage() {
                   </p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-3xl font-bold">{formatCurrency(order.total)}</p>
+              <div className="text-right gap-4 flex flex-col items-end">
+                <p className="text-3xl font-bold">
+                  {formatCurrency(order.total)}
+                </p>
+                {order.status === "delivered" && (
+                  <button
+                    onClick={() => setShowConfirm(true)}
+                    className="px-4 py-2 text-sm cursor-pointer font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+                  >
+                    Selesaikan Pesanan
+                  </button>
+                )}
+                {order.status === "completed" && !order.product_reviews?.length && (
+                  <button
+                    onClick={() => {
+                      setSelectedOrderId(order.id);
+                      setSelectedProductId(order.order_items[0].product_id); // asumsi 1 produk
+                      setShowReview(true);
+                    }}
+                    className="px-4 py-2 text-sm cursor-pointer font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+                  >
+                    Berikan Ulasan
+                  </button>
+                )}
               </div>
+              {showConfirm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                  <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-lg">
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Konfirmasi Pesanan
+                    </h2>
+
+                    <p className="text-sm text-gray-600 mt-2">
+                      Apakah Anda yakin ingin menyelesaikan pesanan ini?
+                    </p>
+
+                    <div className="flex justify-end gap-3 mt-6">
+                      <button
+                        onClick={() => setShowConfirm(false)}
+                        disabled={submitting}
+                        className="px-4 py-2 text-sm cursor-pointer rounded-lg border text-gray-700 hover:bg-gray-100"
+                      >
+                        Tidak
+                      </button>
+
+                      <button
+                        onClick={handleCompleteOrder}
+                        disabled={submitting}
+                        className="px-4 py-2 text-sm cursor-pointer rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
+                      >
+                        {submitting ? "Memproses..." : "Ya, Selesaikan"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {showReview && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
+                    <h2 className="text-xl font-bold text-gray-900 mb-4">
+                      Berikan Ulasan
+                    </h2>
+
+                    {/* Rating */}
+                    <div className="flex items-center gap-2 mb-4">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setRating(star)}
+                          className={`text-2xl ${
+                            star <= rating ? "text-yellow-400" : "text-gray-300"
+                          }`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Review */}
+                    <textarea
+                      value={review}
+                      onChange={(e) => setReview(e.target.value)}
+                      rows={4}
+                      placeholder="Tulis ulasan kamu di sini..."
+                      className="w-full border rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    {/* Actions */}
+                    <div className="flex justify-end gap-3 mt-6">
+                      <button
+                        onClick={() => setShowReview(false)}
+                        className="px-4 py-2 text-sm cursor-pointer text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                      >
+                        Batal
+                      </button>
+
+                      <button
+                        disabled={rating === 0 || submitting}
+                        onClick={handleSubmitReview}
+                        className="px-4 py-2 text-sm cursor-pointer text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        Kirim
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Order Timeline */}
           <div className="p-6 border-b border-gray-200 print:hidden">
-            <h3 className="font-semibold text-gray-900 mb-4">Timeline Pesanan</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">
+              Timeline Pesanan
+            </h3>
 
             {(() => {
               const status = normalizeStatus(order.status);
@@ -532,9 +721,12 @@ export default function OrderDetailPage() {
           {/* Support Section */}
           <div className="p-6 bg-gray-50 border-t border-gray-200 print:hidden">
             <div className="text-center">
-              <h3 className="font-semibold text-gray-900 mb-2">Butuh Bantuan?</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Butuh Bantuan?
+              </h3>
               <p className="text-gray-600 mb-4">
-                Jika Anda memiliki pertanyaan tentang pesanan Anda, silakan hubungi tim dukungan kami.
+                Jika Anda memiliki pertanyaan tentang pesanan Anda, silakan
+                hubungi tim dukungan kami.
               </p>
               <div className="flex justify-center gap-3">
                 <button className="px-6 py-2 text-sm cursor-pointer font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">

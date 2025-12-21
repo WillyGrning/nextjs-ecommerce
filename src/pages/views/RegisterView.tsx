@@ -148,10 +148,10 @@ export default function RegisterView({
                   <User className="w-10 h-10 md:w-12 md:h-12 text-white" />
                 </div>
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                  Create Account
+                  Buat Akun
                 </h1>
                 <p className="text-rose-100 text-sm md:text-base">
-                  Join us and start your journey
+                  Daftar untuk memulai perjalanan Anda bersama kami
                 </p>
               </div>
 
@@ -162,7 +162,7 @@ export default function RegisterView({
                   <div className="space-y-2">
                     <label className="text-sm md:text-base font-semibold text-gray-700 flex items-center gap-2">
                       <User className="w-4 h-4 text-rose-500" />
-                      Full Name
+                      Nama
                     </label>
                     <div className="relative group">
                       <input
@@ -183,7 +183,7 @@ export default function RegisterView({
                             ? "focus:border-red-500"
                             : "focus:border-rose-500"
                         } focus:bg-white transition-all duration-300 placeholder:text-gray-400`}
-                        placeholder="John Doe"
+                        placeholder="Nama lengkap Anda"
                       />
                       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-rose-500 to-orange-500 rounded-xl opacity-0 group-focus-within:opacity-20 blur transition-opacity duration-300"></div>
                     </div>
@@ -198,7 +198,7 @@ export default function RegisterView({
                   <div className="space-y-2">
                     <label className="text-sm md:text-base font-semibold text-gray-700 flex items-center gap-2">
                       <Mail className="w-4 h-4 text-rose-500" />
-                      Email Address
+                      Email
                     </label>
                     <div className="relative group">
                       <input
@@ -219,7 +219,7 @@ export default function RegisterView({
                             ? "focus:border-red-500"
                             : "focus:border-rose-500"
                         } focus:bg-white transition-all duration-300 placeholder:text-gray-400`}
-                        placeholder="your.email@example.com"
+                        placeholder="Email"
                       />
                       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-rose-500 to-orange-500 rounded-xl opacity-0 group-focus-within:opacity-20 blur transition-opacity duration-300"></div>
                     </div>
@@ -260,7 +260,7 @@ export default function RegisterView({
                               ? "focus:border-red-500"
                               : "focus:border-rose-500"
                           } focus:bg-white transition-all duration-300 placeholder:text-gray-400 pr-12`}
-                          placeholder="Create a strong password"
+                          placeholder="Password"
                         />
 
                         {/* Show/Hide Password button */}
@@ -287,7 +287,7 @@ export default function RegisterView({
                         </p>
                       ) : (
                         <p className="text-xs text-gray-500 mt-1">
-                          Must be at least 8 characters long
+                          Minimal 8 karakter
                         </p>
                       )}
                     </div>
@@ -298,19 +298,19 @@ export default function RegisterView({
                       disabled={loading}
                       className="w-full bg-gradient-to-r cursor-pointer from-rose-500 to-orange-500 text-white py-3.5 md:py-4 text-base md:text-lg rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group mt-2"
                     >
-                      {loading ? "Creating Account..." : "Create Account"}
+                      {loading ? "Loading..." : "Buat Akun"}
                     </button>
                   </form>
                 </div>
 
                 {/* Sign in link */}
                 <p className="text-center text-sm md:text-base text-gray-600 mt-4">
-                  Already have an account?{" "}
+                  Sudah punya akun?{" "}
                   <a
                     href="./login"
                     className="font-semibold text-rose-500 hover:text-rose-600 transition-colors"
                   >
-                    Sign in
+                    Masuk Sekarang
                   </a>
                 </p>
 
@@ -318,7 +318,7 @@ export default function RegisterView({
                 <div className="flex items-center gap-4 my-6 md:my-8">
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
                   <span className="text-sm md:text-base text-gray-500 font-medium">
-                    OR
+                    ATAU
                   </span>
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
                 </div>
@@ -351,25 +351,25 @@ export default function RegisterView({
                     />
                   </svg>
                   <span className="text-sm md:text-base font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                    Sign up with Google
+                    Daftar dengan Google
                   </span>
                 </button>
 
                 {/* Terms */}
                 <p className="text-xs md:text-sm text-gray-500 text-center mt-6">
-                  By signing up, you agree to our{" "}
+                  Dengan mendaftar, Anda setuju dengan{" "}
                   <a
                     href="#"
                     className="text-rose-500 hover:text-rose-600 underline"
                   >
-                    Terms of Service
+                    Syarat Layanan
                   </a>{" "}
-                  and{" "}
+                  dan{" "}
                   <a
                     href="#"
                     className="text-rose-500 hover:text-rose-600 underline"
                   >
-                    Privacy Policy
+                    Kebijakan Privasi
                   </a>
                 </p>
               </div>

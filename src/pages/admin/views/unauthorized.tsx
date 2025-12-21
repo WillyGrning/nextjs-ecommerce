@@ -14,9 +14,9 @@ export default function UnauthorizedView({ email, role }: UnauthorizedViewProps)
           <Shield className="w-14 h-14 text-red-500" />
         </div>
 
-        <h1 className="text-3xl font-bold mb-2">Access Denied</h1>
+        <h1 className="text-3xl font-bold mb-2">Aksess Ditolak</h1>
         <p className="text-gray-600 mb-6">
-          This area is restricted to administrators only.
+          Area ini hanya dapat diakses oleh administrator.
         </p>
 
         <div className="bg-red-50 p-4 rounded-lg mb-6 text-sm text-left">
@@ -29,7 +29,7 @@ export default function UnauthorizedView({ email, role }: UnauthorizedViewProps)
             onClick={() => (window.location.href = "/")}
             className="flex-1 px-4 py-3 bg-gray-100 cursor-pointer rounded-xl"
           >
-            Home
+            Beranda
           </button>
           <button
             onClick={() => (window.location.href = "/auth/login")}

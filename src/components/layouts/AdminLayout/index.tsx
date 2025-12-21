@@ -83,17 +83,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/admin", badge: null },
-    { icon: Users, label: "Users", href: "/admin/users", badge: null },
-    { icon: ShoppingCart, label: "Orders", href: "/admin/orders", badge: pendingOrderCount > 0 ? pendingOrderCount : null },
-    { icon: Package, label: "Products", href: "/admin/products", badge: null },
+    { icon: Users, label: "Pengguna", href: "/admin/users", badge: null },
+    { icon: ShoppingCart, label: "Pesanan", href: "/admin/orders", badge: pendingOrderCount > 0 ? pendingOrderCount : null },
+    { icon: Package, label: "Produk", href: "/admin/products", badge: null },
     {
       icon: BarChart3,
-      label: "Analytics",
+      label: "Analitik",
       href: "/admin/analytics",
       badge: null,
     },
-    { icon: FileText, label: "Reports", href: "/admin/reports", badge: null },
-    { icon: Settings, label: "Settings", href: "/admin/settings", badge: null },
+    { icon: FileText, label: "Laporan", href: "/admin/reports", badge: null },
+    { icon: Settings, label: "Pengaturan", href: "/admin/settings", badge: null },
   ];
 
   const words = session?.user?.name?.trim().split(/\s+/).filter(Boolean) || "";
@@ -203,7 +203,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 sidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
               }`}
             >
-              {session ? "Logout" : "Login"}
+              {session ? "Keluar" : "Masuk"}
             </span>
           </button>
         </div>
@@ -265,14 +265,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 transition-colors"
                     >
                       <User className="w-4 h-4 text-gray-500" />
-                      <span className="text-sm text-gray-700">My Profile</span>
+                      <span className="text-sm text-gray-700">Profil Saya</span>
                     </Link>
                     <Link
                       href="/admin/settings"
                       className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 transition-colors"
                     >
                       <Settings className="w-4 h-4 text-gray-500" />
-                      <span className="text-sm text-gray-700">Settings</span>
+                      <span className="text-sm text-gray-700">Pengaturan</span>
                     </Link>
                     <hr className="my-2" />
                     <button
@@ -289,7 +289,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         <LogIn className="w-4 h-4" />
                       )}
                       <span className="text-sm font-medium">
-                        {session ? "Logout" : "Login"}
+                        {session ? "Keluar" : "Login"}
                       </span>
                     </button>
                   </div>
